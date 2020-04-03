@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div style="margin-left: 10%;width: 80%;">
+            <hr style="color: #cccccc"/>
+            <h1 style="color: blue;">RAS管理页 <span style="font-size: small;color: blueviolet;">version 0.1</span></h1>
+            <p>服务器名：<span> </span></p>
+            <hr style="color: #cccccc"/>
+        </div>
+        <div style="margin-left: 10%;width: 80%;">
+            <h3 style="color: blue;">集群管理</h3>
+            <hr style="color: #cccccc"/>
+        </div>
+        <div style="margin-left: 10%;width: 80%;">
+            <h3 style="color: blue;">客户端管理</h3>
+            <h4>非限定服务提供方列表</h4>
+            <p th:each="service : ${services}">
+                <span th:text="${service.name}"></span>
+                <span th:text="${service.uniName}"></span>
+                <span th:text="${service.url}"></span>
+            </p>
+            <h4>限定服务提供方列表</h4>
+            <p th:each="lservice : ${limitServices}"><span th:text="${lservice.url}"></span></p>
+            <h4>服务消费方列表</h4>
+            <p th:each="customer : ${customers}"><span th:text="${customer.url}"></span></p>
+            <h4>服务网关方列表</h4>
+            <p th:each="gateway : ${gateways}"><span th:text="${gateway.url}"></span></p>
+            <hr style="color: #cccccc"/>
+        </div>
+        <div style="margin-left: 10%;width: 80%;">
+            <h3 style="color: blue;">性能监控</h3>
+            <hr style="color: #cccccc"/>
+        </div>
+    </body>
+</html>
