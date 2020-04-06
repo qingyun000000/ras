@@ -6,9 +6,9 @@ import cn.whl.commonutils.exception.NotExistException;
 import cn.whl.commonutils.exception.ServiceRunException;
 import cn.whl.commonutils.exception.TokenWrongException;
 import cn.whl.commonutils.log.LoggerTools;
-import cn.whl.commonutils.service.result.ServiceResult;
 import cn.whl.commonutils.token.TokenTool;
 import cn.whl.commonutils.verificate.VerificateTool;
+import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;
 import com.zy.zyras.client.domain.LimitedServiceClient;
@@ -23,6 +23,7 @@ import com.zy.zyras.client.domain.vo.ServiceResponse;
 import com.zy.zyras.client.pool.ClientPool;
 import com.zy.zyras.client.service.ClientService;
 import com.zy.zyras.ras.utils.RasUtils;
+import com.zy.zyras.utils.HttpUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.print.attribute.standard.Severity;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +50,7 @@ public class ClientServiceImpl implements ClientService {
     //服务提供方修改锁
     private Lock updateServiceLock = new ReentrantLock();
 
-    //服务请求方修改锁
+    //服务调用方修改锁
     private Lock updateCustomerLock = new ReentrantLock();
 
     //网关修改锁
@@ -59,7 +62,7 @@ public class ClientServiceImpl implements ClientService {
             //服务提供方注册
             return this.serviceRegist(request);
         } else if ("customer".equals(request.getClientType())) {
-            //服务请求方注册
+            //服务调用方注册
             return this.customerRegist(request);
         } else if ("gateway".equals(request.getClientType())) {
             //网关注册
@@ -132,7 +135,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public RegistResponse customerRegist(RegistRequest request) throws ExistException {
+    public RegistResponse customerRegist(RegistRequest request) throws ExistException, ServiceRunException {
         String name = request.getName();
         ClientPool pool = ClientPool.getInstance();
         RegistResponse response = new RegistResponse();
@@ -156,7 +159,11 @@ public class ClientServiceImpl implements ClientService {
                 }
                 customerClient.setUniName(uniName);
                 customerClient.setUrl(request.getUrl());
-                customerClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                try {
+                    customerClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                } catch (Exception ex) {
+                    throw new ServiceRunException("token生成失败");
+                }
                 
                 pool.addCustomer(customerClient);
             }
@@ -219,7 +226,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public RegistResponse gatewayRegist(RegistRequest request) throws ExistException {
+    public RegistResponse gatewayRegist(RegistRequest request) throws ExistException, ServiceRunException {
         String name = request.getName();
         ClientPool pool = ClientPool.getInstance();
         RegistResponse response = new RegistResponse();
@@ -243,7 +250,11 @@ public class ClientServiceImpl implements ClientService {
                 }
                 gatewayClient.setUniName(uniName);
                 gatewayClient.setUrl(request.getUrl());
-                gatewayClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                try {
+                    gatewayClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                } catch (Exception ex) {
+                    throw new ServiceRunException("token生成失败");
+                }
                 
                 pool.addGateway(gatewayClient);
             }
@@ -326,7 +337,11 @@ public class ClientServiceImpl implements ClientService {
         limitedServiceClient.setName(request.getName());
         limitedServiceClient.setUniName(uniName);
         limitedServiceClient.setUrl(request.getUrl());
-        limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        try {
+            limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        } catch (Exception ex) {
+            throw new ServiceRunException("token生成失败");
+        }
         limitedServiceClient.setInterList(newInterList);
         
         limitService.put(uniName, limitedServiceClient);
@@ -338,7 +353,7 @@ public class ClientServiceImpl implements ClientService {
      * limitedService服务新增服务
      * @param request 
      */
-    private LimitedServiceClient limitedServiceRegist(ClientPool pool, RegistRequest request) {
+    private LimitedServiceClient limitedServiceRegist(ClientPool pool, RegistRequest request) throws ServiceRunException {
         //interList封装
         String[] inters = request.getInterList().split(",");
         Set<String> newInterList = new HashSet<>();
@@ -356,7 +371,11 @@ public class ClientServiceImpl implements ClientService {
         limitedServiceClient.setName(request.getName());
         limitedServiceClient.setUniName(uniName);
         limitedServiceClient.setUrl(request.getUrl());
-        limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        try {
+            limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        } catch (Exception ex) {
+            throw new ServiceRunException("token生成失败");
+        }
         limitedServiceClient.setInterList(newInterList);
         Map<String, LimitedServiceClient> newLimitedSevice = new HashMap<>();
         newLimitedSevice.put(uniName, limitedServiceClient);
@@ -372,7 +391,7 @@ public class ClientServiceImpl implements ClientService {
      * @param request
      * @return 
      */
-    private ServiceClient serviceRegist(Map<String, ServiceClient> service, RegistRequest request) {
+    private ServiceClient serviceRegist(Map<String, ServiceClient> service, RegistRequest request) throws ServiceRunException {
         //加入服务
         String uniName;
         if(VerificateTool.notEmpty(request.getUniName())){
@@ -384,7 +403,11 @@ public class ClientServiceImpl implements ClientService {
         serviceClient.setName(request.getName());
         serviceClient.setUniName(uniName);
         serviceClient.setUrl(request.getUrl());
-        serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        try {
+            serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        } catch (Exception ex) {
+            throw new ServiceRunException("token生成失败");
+        }
         service.put(uniName, serviceClient);
         
         return serviceClient;
@@ -396,7 +419,7 @@ public class ClientServiceImpl implements ClientService {
      * @param request
      * @return 
      */
-    private ServiceClient serviceRegist(ClientPool pool, RegistRequest request) {
+    private ServiceClient serviceRegist(ClientPool pool, RegistRequest request) throws ServiceRunException {
         //加入服务
         String uniName;
         if(VerificateTool.notEmpty(request.getUniName())){
@@ -408,7 +431,11 @@ public class ClientServiceImpl implements ClientService {
         serviceClient.setName(request.getName());
         serviceClient.setUniName(uniName);
         serviceClient.setUrl(request.getUrl());
-        serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        try {
+            serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+        } catch (Exception ex) {
+            throw new ServiceRunException("token生成失败");
+        }
         Map<String, ServiceClient> newSevice = new HashMap<>();
         newSevice.put(uniName, serviceClient);
         
@@ -484,6 +511,57 @@ public class ClientServiceImpl implements ClientService {
         }
         
         return responses;
+    }
+
+    @Override
+    public boolean removeClient(Client client) {
+        ClientPool pool = ClientPool.getInstance();
+        if(client instanceof LimitedServiceClient){
+            pool.removeLimitedServiceClient(client.getName(), client.getUniName());
+        }else if(client instanceof ServiceClient){
+            pool.removeServiceClient(client.getName(), client.getUniName());
+        }else if(client instanceof GatewayClient){
+            pool.removeGatewayClient(client.getName());
+        }else if(client instanceof CustomerClient){
+            pool.removeCustomerClient(client.getName());
+        }
+            
+        return true;
+        
+    }
+
+    @Override
+    public void heartbeat() {
+        LoggerTools.log4j_write.info("开始心跳连接检测");
+        //获取心跳连接配置
+        int hearbeatLeaveTimes = RasUtils.getHearbeatLeaveTimes();
+        int hearbeatTime = RasUtils.getHearbeatTime();
+        Long date = new Date().getTime();
+        //获取客户端
+        ClientPool pool = ClientPool.getInstance();
+        Set<Client> Clients = pool.getAllClients();
+        for(Client client : Clients){
+            //时间校验
+            if(client.getTms() == null || date - client.getTms() > hearbeatTime ){
+                
+                Map<String, Object> params = new HashMap<>();
+                try{
+                    String result = HttpUtil.doPost(client.getUrl() + "/hearbeat", params);
+                    client.setFailNum(0);
+                    client.setTms(date);
+                }catch(Exception e){
+                    if(client.getFailNum() >= hearbeatLeaveTimes  - 1){
+                        //心跳连接连续失败次数超过设置值，移除
+                        this.removeClient(client);
+                    }else{
+                        client.setFailNum(client.getFailNum() + 1);
+                        client.setTms(date);
+                    }
+                }
+                
+            }
+        }
+        LoggerTools.log4j_write.info("心跳连接检测完成");
     }
 
 }

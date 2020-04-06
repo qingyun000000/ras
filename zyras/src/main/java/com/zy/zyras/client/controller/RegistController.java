@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
-* 提供客户端注册接口，包括统一注册接口，服务提供方注册接口，服务请求方注册接口，服务提供和请求方注册接口，网关注册接口
+* 提供客户端注册接口，包括统一注册接口，服务提供方注册接口，服务调用方注册接口，服务提供和调用方注册接口，网关注册接口
 * 统一注册接口：传入注册类型
 * 
 */
@@ -65,7 +65,7 @@ public class RegistController {
                 throw new NullPointerException("输入客户端名");
             }
             LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
-            request.setUrl(req.getRemoteAddr() + ":" + req.getRemotePort());
+            request.setUrl("http://" + req.getRemoteAddr() + ":" + req.getRemotePort());
         }, ()->clientService.regist(request));
         return result;
     }
@@ -99,7 +99,7 @@ public class RegistController {
     }
     
     /**
-     * 服务请求方注册接口
+     * 服务调用方注册接口
      * @param request
      * @return 
      */
@@ -113,7 +113,7 @@ public class RegistController {
             if(VerificateTool.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端" + request.getName() + "请求接入 ");
+            LoggerTools.log4j_write.info("客户端" + request.getName() + "调用接入 ");
             LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
             request.setUrl(req.getRemoteAddr() + ":" + req.getRemotePort());
         }, ()->clientService.customerRegist(request));
@@ -121,7 +121,7 @@ public class RegistController {
     }
     
     /**
-     * 服务提供和请求方注册接口
+     * 服务提供和调用方注册接口
      * @param request
      * @return 
      */

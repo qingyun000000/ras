@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
-* 注册中心定时更新服务请求token
-* 服务调用方需要定时从注册中心获取服务请求token
-* 在调用服务时需要传递服务请求token
-* 服务提供方拦截请求，进行权限校验（1，时校校验， 2，身份识别，开放给注册中心的接口权限校验）
-* 服务提供方可定时获取服务请求token（高安全模式），也可解码获得时间和注册中心名来校验（低安全模式） 
+* 注册中心定时更新服务调用token
+* 服务调用方需要定时从注册中心获取服务调用token
+* 在调用服务时需要传递服务调用token
+* 服务提供方拦截调用，进行权限校验（1，时校校验， 2，身份识别，开放给注册中心的接口权限校验）
+* 服务提供方可定时获取服务调用token（高安全模式），也可解码获得时间和注册中心名来校验（低安全模式） 
 * 服务提供方应当在时校上适当延迟（高安全模式需要保存至少前一个token），为网络传输提供时间窗口
 */
 
 /**
- * 服务请求权限Controller
+ * 服务调用权限Controller
  * @author wuhailong
  * @createTime 2020-03-27
  * @updateTime 2020-03-27
@@ -38,7 +38,7 @@ public class ServiceRequestAuthorityController {
     private AuthorityService authorityService; 
     
     /**
-     * 服务请求token
+     * 服务调用token
      * @param request
      * @return 
      */

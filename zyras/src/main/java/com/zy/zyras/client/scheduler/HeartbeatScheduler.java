@@ -1,5 +1,7 @@
 package com.zy.zyras.client.scheduler;
 
+import com.zy.zyras.client.service.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,9 +20,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 public class HeartbeatScheduler {
     
-    @Scheduled(cron = "0/15 * * * * ?")
+    /*
+     * 客户端业务组件
+     */
+    @Autowired
+    private ClientService clientService; 
+    
+    @Scheduled(cron = "0/5 * * * * ?")
     private void heartbeatConnect(){
-        
+        clientService.heartbeat();
     }
     
 }

@@ -20,7 +20,7 @@ public class AuthorityServiceImpl implements AuthorityService{
 
     @Override
     public ServiceRequestTokenResponse getServiceRequestToken(ServiceRequestTokenRequest request) throws TokenWrongException {
-        LoggerTools.log4j_write.info("获取服务请求token");
+        LoggerTools.log4j_write.info("获取服务调用token");
         ClientPool pool = ClientPool.getInstance();
         /*
          * 客户端校验

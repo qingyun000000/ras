@@ -2,6 +2,8 @@ package com.zy.zyras.manager.controller;
 
 import com.zy.zyras.client.domain.vo.CustomerResponse;
 import com.zy.zyras.client.service.ClientService;
+import com.zy.zyras.group.domain.Ras;
+import com.zy.zyras.group.service.GroupService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,12 @@ public class ManagerController {
     @Autowired
     private ClientService clientService; 
     
+    /*
+    * 集群组件
+    */
+    @Autowired
+    private GroupService groupService; 
+    
     /**
      * 管理主页
      * @param model
@@ -34,6 +42,10 @@ public class ManagerController {
     public String mangerMainPage(Model model){
         List<CustomerResponse> customerClients = clientService.getCustomerClients();
         model.addAttribute("customers", customerClients);
+        
+        List<Ras> rass = groupService.getAllRass();
+        model.addAttribute("rass", rass);
+        
         return "manager";
     }
     

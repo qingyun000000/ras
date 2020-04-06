@@ -1,13 +1,16 @@
 package com.zy.zyras.client.pool;
 
 import cn.whl.commonutils.log.LoggerTools;
+import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;
 import com.zy.zyras.client.domain.LimitedServiceClient;
 import com.zy.zyras.client.domain.ServiceClient;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /*
 * 单例模式，保存客户端列表
@@ -95,7 +98,7 @@ public class ClientPool {
     }
 
     /**
-     * 服务请求方客户端包含服务名
+     * 服务调用方客户端包含服务名
      *
      * @param name
      * @return
@@ -181,13 +184,13 @@ public class ClientPool {
     }
 
     /**
-     * 根据token判断对方是否时服务请求方（含网关）
+     * 根据token判断对方是否时服务调用方（含网关）
      *
      * @param token
      * @return
      */
     public boolean containsCustomerOrGatewayByToken(String token) {
-        LoggerTools.log4j_write.info("请求方身份校验");
+        LoggerTools.log4j_write.info("调用方身份校验");
         for (GatewayClient client : gatewayClients.values()) {
             if (client.getToken().equals(token)) {
                 return true;
@@ -198,13 +201,12 @@ public class ClientPool {
                 return true;
             }
         }
-        LoggerTools.log4j_write.info("请求方身份校验不通过");
+        LoggerTools.log4j_write.info("调用方身份校验不通过");
         return false;
     }
 
     /**
      * 根据token判断对方是否是正常客户端
-     *
      * @param token
      * @return
      */
@@ -217,7 +219,7 @@ public class ClientPool {
         }
         LoggerTools.log4j_write.info("服务方身份校验通过");
         for (Map<String, ServiceClient> service : serviceClients.values()) {
-            for(ServiceClient client : service.values()){
+            for (ServiceClient client : service.values()) {
                 if (client.getToken().equals(token)) {
                     return true;
                 }
@@ -227,7 +229,7 @@ public class ClientPool {
         LoggerTools.log4j_write.info("限定服务方身份校验");
         for (Map<String, LimitedServiceClient> service : limitedServiceClients.values()) {
             LoggerTools.log4j_write.info("限定服务方身份校验");
-            for(LimitedServiceClient client : service.values()){
+            for (LimitedServiceClient client : service.values()) {
                 if (client.getToken().equals(token)) {
                     LoggerTools.log4j_write.info("限定服务方身份校验");
                     return true;
@@ -240,6 +242,64 @@ public class ClientPool {
 
     public Map<String, CustomerClient> getAllCustomer() {
         return customerClients;
+    }
+
+    /**
+     * 获取所有客户端
+     */
+    public Set<Client> getAllClients() {
+        Set<Client> clients = new HashSet<>();
+        for (GatewayClient client : gatewayClients.values()) {
+            clients.add(client);
+        }
+        for (CustomerClient client : customerClients.values()) {
+            clients.add(client);
+        }
+        for (Map<String, ServiceClient> service : serviceClients.values()) {
+            for (ServiceClient client : service.values()) {
+                clients.add(client);
+            }
+        }
+        for (Map<String, LimitedServiceClient> service : limitedServiceClients.values()) {
+            for (LimitedServiceClient client : service.values()) {
+                clients.add(client);
+            }
+        }
+        return clients;
+    }
+
+    /**
+     * 移除限制服务提供方客户端
+     * @param name
+     * @param uniName 
+     */
+    public void removeLimitedServiceClient(String name, String uniName) {
+        limitedServiceClients.get(name).remove(uniName);
+    }
+
+    /**
+     * 移除非限制服务提供方客户端
+     * @param name
+     * @param uniName 
+     */
+    public void removeServiceClient(String name, String uniName) {
+        serviceClients.get(name).remove(uniName);
+    }
+
+    /**
+     * 移除网关
+     * @param name 
+     */
+    public void removeGatewayClient(String name) {
+        gatewayClients.remove(name);
+    }
+
+    /**
+     * 移除服务调用方
+     * @param name 
+     */
+    public void removeCustomerClient(String name) {
+        customerClients.remove(name);
     }
 
 }

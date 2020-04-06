@@ -14,7 +14,7 @@ import com.zy.zyras.authority.domain.vo.ServiceRequestTokenResponse;
 public interface AuthorityService {
 
     /**
-     * 获取服务请求token(
+     * 获取服务调用token(
      * @param request
      * @return 
      * @throws cn.whl.commonutils.exception.TokenWrongException 

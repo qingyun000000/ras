@@ -19,6 +19,10 @@ and open the template in the editor.
         </div>
         <div style="margin-left: 10%;width: 80%;">
             <h3 style="color: blue;">集群管理</h3>
+            <p th:each="ras : ${rass}">
+                <span th:text="${ras.name}"></span>
+                <span th:text="${ras.url}"></span>
+            </p>
             <hr style="color: #cccccc"/>
         </div>
         <div style="margin-left: 10%;width: 80%;">
