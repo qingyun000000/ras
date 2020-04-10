@@ -2,6 +2,8 @@ package com.zy.zyras.group.controller;
 
 import com.zy.zyras.group.domain.vo.RegistRequest;
 import com.zy.zyras.group.domain.vo.RegistResponse;
+import com.zy.zyras.group.domain.vo.SynRequest;
+import com.zy.zyras.group.domain.vo.SynResponse;
 import com.zy.zyras.group.service.GroupService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +35,8 @@ public class GroupController {
     }
     
     @PostMapping("/syn")
-    public RegistResponse syn(RegistRequest registRequest, HttpServletRequest req) {
-        return null;
+    public SynResponse syn(SynRequest synRequest, HttpServletRequest req) {
+        return groupService.syn(synRequest);
     }
    
 }

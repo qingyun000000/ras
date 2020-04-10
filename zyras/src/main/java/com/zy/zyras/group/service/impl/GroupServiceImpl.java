@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.zy.zyras.group.domain.Ras;
 import com.zy.zyras.group.domain.vo.RegistRequest;
 import com.zy.zyras.group.domain.vo.RegistResponse;
+import com.zy.zyras.group.domain.vo.SynRequest;
+import com.zy.zyras.group.domain.vo.SynResponse;
 import com.zy.zyras.group.pool.RasPool;
 import com.zy.zyras.group.service.GroupService;
 import com.zy.zyras.ras.enums.GroupState;
@@ -86,6 +88,40 @@ public class GroupServiceImpl implements GroupService{
         
         LoggerTools.log4j_write.info("结束集群同步");
     }
+    
+    @Override
+    public SynResponse syn(SynRequest synRequest) {
+        LoggerTools.log4j_write.info("处理集群同步信息开始");
+        
+        //同步全部为增加，删除客户端均由心跳连接处理
+        
+        //同步注册中心列表
+        
+        //同步客户端列表
+        //1.限制服务提供方
+        
+        //2.非限制服务提供方
+        
+        //3.服务调用方
+        
+        //4.网关
+        
+        SynResponse response = new SynResponse();
+        
+        return response;
+    }
+    
+    @Override
+    public List<Ras> getAllRass() {
+        RasPool pool = RasPool.getInstance();
+        Map<String, Ras> rass = pool.getAllRass();
+        List<Ras> rasList = new ArrayList<>();
+        for(Ras ras : rass.values()){
+            rasList.add(ras);
+        }
+        
+        return rasList;
+    }
 
     /**
      * 将对方注册到本方的池中
@@ -99,17 +135,9 @@ public class GroupServiceImpl implements GroupService{
         pool.addRas(ras);
     }
 
-    @Override
-    public List<Ras> getAllRass() {
-        RasPool pool = RasPool.getInstance();
-        Map<String, Ras> rass = pool.getAllRass();
-        List<Ras> rasList = new ArrayList<>();
-        for(Ras ras : rass.values()){
-            rasList.add(ras);
-        }
-        
-        return rasList;
-    }
+    
+
+    
 
     
     

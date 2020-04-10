@@ -7,6 +7,7 @@ package com.zy.zyrasclient.remote;
 
 import com.zy.zyrasc.annotation.RemoteService;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *
@@ -15,6 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RemoteService(serviceName = "comm5")
 public interface TestRemoteClass2 {
     
-    @RequestMapping("/url2")
+    @RequestMapping(value = "/url2", method = RequestMethod.GET)
     public String test2();
 }

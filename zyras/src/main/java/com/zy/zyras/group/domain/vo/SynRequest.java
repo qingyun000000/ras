@@ -1,10 +1,10 @@
 package com.zy.zyras.group.domain.vo;
 
 /**
- * 注册请求参数
+ * 同步请求参数
  * @author Administrator
  */
-public class RegistRequest {
+public class SynRequest {
  
     /**
      * 注册中心名

@@ -546,7 +546,7 @@ public class ClientServiceImpl implements ClientService {
                 
                 Map<String, Object> params = new HashMap<>();
                 try{
-                    String result = HttpUtil.doPost(client.getUrl() + "/hearbeat", params);
+                    String result = HttpUtil.doPost(client.getUrl() + "/zyras/hearbeat", params);
                     client.setFailNum(0);
                     client.setTms(date);
                 }catch(Exception e){

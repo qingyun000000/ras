@@ -4,15 +4,12 @@ import com.zy.zyrasc.server.FindServiceService;
 import com.zy.zyrasc.status.ClientStatus;
 import com.zy.zyrasc.vo.ServiceClient;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 负载均衡器
  * @author wuhailong
  */
 public class LoadBalanceService {
-    
-    private static Random random = new Random();
     
     /**
      * 获取服务客户端

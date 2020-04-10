@@ -5,16 +5,11 @@ import com.zy.zyrasc.pool.ServicePool;
 import com.zy.zyrasc.status.ClientStatus;
 import com.zy.zyrasc.utils.HttpUtil;
 import com.zy.zyrasc.vo.LimitedServiceClient;
-import com.zy.zyrasc.vo.RegistResponse;
 import com.zy.zyrasc.vo.ServiceClient;
 import com.zy.zyrasc.vo.ServiceResponse;
-import com.zy.zyrasc.vo.ServiceResult;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 /**

@@ -7,17 +7,23 @@ package com.zy.zyrasc.fuse;
 
 import java.lang.reflect.Method;
 import java.util.ServiceLoader;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * 降级服务
  *
  * @author wuhailong
  */
-public class SecondaryService {
+public class SecondaryService implements ApplicationContextAware{
+    
+    private Object o;
 
     public static <T> Object secondaryService(Method method, Object o, Object[] os, Class<T> interfaceClass) throws Exception {
 
-        ServiceLoader<T> load = ServiceLoader.load(interfaceClass);
+        System.out.println(interfaceClass.getSimpleName());
+        ServiceLoader<T> load = 
         int count = 0;
         for (T t : load) {
             count++;
@@ -37,5 +43,10 @@ public class SecondaryService {
             return response;
         }
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext ac) throws BeansException {
+        o = ac.getBeansOfType(interfaceClass)
     }
 }
