@@ -2,6 +2,7 @@ package com.zy.zyrasclient;
 
 import com.zy.zyrasclient.remote.TestRemoteClass;
 import com.zy.zyrasclient.remote.TestRemoteClass2;
+import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

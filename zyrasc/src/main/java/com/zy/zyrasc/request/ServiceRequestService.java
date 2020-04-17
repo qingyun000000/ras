@@ -2,7 +2,6 @@ package com.zy.zyrasc.request;
 
 import com.zy.zyrasc.balance.LoadBalanceService;
 import com.alibaba.fastjson.JSON;
-import com.zy.zyrasc.fuse.FuseService;
 import com.zy.zyrasc.utils.HttpUtil;
 import com.zy.zyrasc.vo.ServiceClient;
 import java.util.Map;
@@ -23,15 +22,20 @@ public class ServiceRequestService {
      * @param method
      * @param params
      * @return 
+     * @throws java.lang.Exception 
      */
-    public static <T> T request(Class<T> clazz, String serviceName, String url, RequestMethod method, Map<String, Object> params){
+    public static <T> T request(Class<T> clazz, String serviceName, String url, RequestMethod method, Map<String, Object> params) throws Exception{
         
         //负载均衡
         ServiceClient client = LoadBalanceService.getServiceClient(serviceName);
         
-        T response = request0(method, client, url, params, clazz);
+        if(client != null){
+            T response = request0(method, client, url, params, clazz);
+            return response;
+        }else{
+            throw new Exception("可用的服务客户端");
+        }
         
-        return response;
     }
 
     /**

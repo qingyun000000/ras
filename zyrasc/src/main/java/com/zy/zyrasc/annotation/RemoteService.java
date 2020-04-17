@@ -15,6 +15,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface RemoteService {
     
+    /**
+     * 没有用
+     * @return 
+     */
     String value() default "remote";
+    
+    /**
+     * 远程服务名
+     * @return
+     */
     String serviceName();
 }

@@ -9,5 +9,10 @@ import java.util.List;
  */
 public interface LoadBalanceMethod {
     
+    /**
+     * 负载均衡方法
+     * @param clients
+     * @return 
+     */
     public ServiceClient balanceMethod(List<ServiceClient> clients);
 }

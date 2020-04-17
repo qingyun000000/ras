@@ -64,6 +64,7 @@ public class RegistService {
         if(result1.isSuccess()){
             System.out.println("注册成功！");
             RegistResponse registResponse = (RegistResponse)result1.getData();
+            ClientStatus.setType(type);
             ClientStatus.setRasUrl(rasUrl);
             ClientStatus.setToken(registResponse.getToken());
             return true;

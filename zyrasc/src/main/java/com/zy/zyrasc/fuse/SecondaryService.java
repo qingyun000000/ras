@@ -6,47 +6,29 @@
 package com.zy.zyrasc.fuse;
 
 import java.lang.reflect.Method;
-import java.util.ServiceLoader;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * 降级服务
  *
  * @author wuhailong
  */
-public class SecondaryService implements ApplicationContextAware{
-    
-    private Object o;
+public class SecondaryService {
 
-    public static <T> Object secondaryService(Method method, Object o, Object[] os, Class<T> interfaceClass) throws Exception {
-
-        System.out.println(interfaceClass.getSimpleName());
-        ServiceLoader<T> load = 
-        int count = 0;
-        for (T t : load) {
-            count++;
-        }
-        if (count < 1) {
-            //没有配置降级类，返回错误信息
-            throw new Exception("请求服务失败，降级实现类不存在，无法进行降级处理");
-        } else if (count > 1) {
-            //没有配置降级类，返回错误信息
-            throw new Exception("请求服务失败，降级实现类冲突（存在多个），无法进行降级处理");
-        } else {
-            //执行第一个实现类方法（本质时只有一个）
-            T t = load.iterator().next();
-            System.out.println(t.getClass().getSimpleName());
-            Method method1 = t.getClass().getMethod(method.getName(), method.getParameterTypes());
-            Object response = method1.invoke(o, os);
-            return response;
-        }
-
+    /**
+     * 降级方法
+     * @param <T>
+     * @param method
+     * @param o
+     * @param os
+     * @param interfaceClass
+     * @return
+     * @throws Exception 
+     */
+    public <T> Object secondaryService(Method method, Object o, Object[] os, Class<T> interfaceClass) throws Exception {
+        Class<?> clazz = Class.forName(interfaceClass.getName()+ "Impl");
+        Method method1 = clazz.getMethod(method.getName(), method.getParameterTypes());
+        Object response = method1.invoke(clazz.newInstance(), os);
+        return response;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        o = ac.getBeansOfType(interfaceClass)
-    }
 }

@@ -42,7 +42,7 @@ public class ProxyFactoryBean<T> implements FactoryBean{
                 boolean fuse = FuseService.fuse(rs.serviceName());
                 if(fuse){
                     //已熔断,降级方法执行
-                    response = SecondaryService.secondaryService(method, o, os,interfaceClass);
+                    response = new SecondaryService().secondaryService(method, o, os,interfaceClass);
                 }else{
                     //封装请求参数
                     Map<String, Object> params = new HashMap<>();
@@ -53,7 +53,7 @@ public class ProxyFactoryBean<T> implements FactoryBean{
                         response = ServiceRequestService.request(returnType, rs.serviceName(),annotation.value()[0], annotation.method()[0], params);
                     }catch(Exception ex){
                         //服务失败，降级方法执行
-                        response = SecondaryService.secondaryService(method, o, os,interfaceClass);
+                        response = new SecondaryService().secondaryService(method, o, os,interfaceClass);
                     }
                 }
                 

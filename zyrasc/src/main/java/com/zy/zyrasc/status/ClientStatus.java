@@ -9,6 +9,11 @@ import com.zy.zyrasc.balance.LoadBalanceMethod;
  */
 public class ClientStatus {
     /*
+     * 客户端类型
+     */
+    private static String type; 
+    
+    /*
      * 注册中心地址
      */
     private static String rasUrl; 
@@ -27,6 +32,14 @@ public class ClientStatus {
     * 负载均衡方法
     */
     private static LoadBalanceMethod balanceMethod;
+
+    public static String getType() {
+        return type;
+    }
+
+    public static void setType(String type) {
+        ClientStatus.type = type;
+    }
 
     public static String getRasUrl() {
         return rasUrl;
