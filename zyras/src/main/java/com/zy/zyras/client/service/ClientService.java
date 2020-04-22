@@ -5,21 +5,17 @@ import cn.whl.commonutils.exception.InputWrongException;
 import cn.whl.commonutils.exception.NotExistException;
 import cn.whl.commonutils.exception.ServiceRunException;
 import cn.whl.commonutils.exception.TokenWrongException;
-import cn.whl.commonutils.service.result.ServiceResult;
 import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.vo.CustomerResponse;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.domain.vo.RegistResponse;
-import com.zy.zyras.client.domain.vo.ServiceClientResponse;
 import com.zy.zyras.client.domain.vo.ServiceResponse;
 import java.util.List;
 
 /**
  * 业务层接口：客户端
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public interface ClientService {
 

@@ -3,8 +3,6 @@ package com.zy.zyras.group.domain;
 /**
  * 实体：注册中心
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class Ras {
     

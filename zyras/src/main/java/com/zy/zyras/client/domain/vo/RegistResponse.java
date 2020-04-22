@@ -6,8 +6,6 @@ import com.zy.zyras.client.domain.enums.ServiceType;
 /**
  * 返回报文：注册
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class RegistResponse {
     

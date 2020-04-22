@@ -2,7 +2,7 @@ package com.zy.zyras.group.domain.vo;
 
 /**
  * 注册返回参数
- * @author Administrator
+ * @author wuhailong
  */
 public class RegistResponse {
  

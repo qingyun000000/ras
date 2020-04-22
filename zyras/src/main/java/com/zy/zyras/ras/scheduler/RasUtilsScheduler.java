@@ -1,12 +1,10 @@
 package com.zy.zyras.ras.scheduler;
 
 import cn.whl.commonutils.log.LoggerTools;
-import cn.whl.commonutils.token.TokenTool;
 import com.zy.zyras.ras.enums.GroupState;
 import com.zy.zyras.ras.enums.WorkState;
 import com.zy.zyras.ras.utils.RasUtils;
 import com.zy.zyras.ras.utils.RequestTokenUtils;
-import java.util.Date;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,8 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * 定时器：RasUtils维护
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @Configuration
 @EnableScheduling

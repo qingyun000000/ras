@@ -2,7 +2,7 @@ package com.zy.zyras.group.domain.vo;
 
 /**
  * 同步返回参数
- * @author Administrator
+ * @author wuhailong
  */
 public class SynResponse {
  

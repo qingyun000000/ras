@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 /**
  * 业务层实现：权限
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @Service
 public class AuthorityServiceImpl implements AuthorityService{

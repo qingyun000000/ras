@@ -3,8 +3,6 @@ package com.zy.zyras.client.domain.vo;
 /**
  * 报文封装：注册
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class RegistRequest {
     

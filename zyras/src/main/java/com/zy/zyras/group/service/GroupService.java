@@ -10,8 +10,6 @@ import java.util.List;
 /**
  * 业务层接口：集群
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public interface GroupService {
 

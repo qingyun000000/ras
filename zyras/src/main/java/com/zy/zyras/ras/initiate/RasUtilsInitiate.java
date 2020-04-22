@@ -1,10 +1,6 @@
 package com.zy.zyras.ras.initiate;
 
 import cn.whl.commonutils.log.LoggerTools;
-import cn.whl.commonutils.token.RasEqualityModeToken;
-import cn.whl.commonutils.token.RasSingleModeToken;
-import cn.whl.commonutils.token.Token;
-import cn.whl.commonutils.token.TokenTool;
 import com.zy.zyras.ras.enums.BalanceMethod;
 import com.zy.zyras.ras.enums.GroupState;
 import com.zy.zyras.ras.enums.WorkState;
@@ -13,8 +9,6 @@ import com.zy.zyras.ras.utils.RequestTokenUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -25,8 +19,6 @@ import com.zy.zyras.group.service.GroupService;
 /**
  * 注册中心配置初始化
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @Component
 public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEvent>{

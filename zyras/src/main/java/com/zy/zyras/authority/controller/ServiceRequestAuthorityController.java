@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 服务调用权限Controller
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @RestController
 @RequestMapping("/authority/serviceRequest")

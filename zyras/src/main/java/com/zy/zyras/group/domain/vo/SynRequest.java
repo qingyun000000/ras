@@ -2,7 +2,7 @@ package com.zy.zyras.group.domain.vo;
 
 /**
  * 同步请求参数
- * @author Administrator
+ * @author wuhailong
  */
 public class SynRequest {
  

@@ -1,15 +1,11 @@
 package com.zy.zyras.client.domain.vo;
 
-import com.zy.zyras.client.domain.LimitedServiceClient;
-import com.zy.zyras.client.domain.ServiceClient;
 import com.zy.zyras.client.domain.enums.ServiceType;
 import java.util.List;
 
 /**
  * 返回报文：服务
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class ServiceResponse {
     

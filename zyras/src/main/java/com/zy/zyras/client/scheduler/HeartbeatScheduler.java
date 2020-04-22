@@ -13,8 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * 定时器：心跳检测
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @Configuration
 @EnableScheduling

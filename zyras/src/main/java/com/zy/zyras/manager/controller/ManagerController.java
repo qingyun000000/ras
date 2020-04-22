@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * 管理页面Controller
  * @author wuhailong
- * @createTime 2020-03-30
- * @updateTime 2020-03-30
  */
 @Controller
 @RequestMapping("/ras")

@@ -8,8 +8,6 @@ import java.util.List;
 /**
  * 工具：注册中心
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class RasUtils {
     

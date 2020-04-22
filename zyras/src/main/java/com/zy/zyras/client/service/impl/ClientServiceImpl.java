@@ -40,8 +40,6 @@ import org.springframework.stereotype.Service;
 /**
  * 业务层实现：客户端
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @Service
 public class ClientServiceImpl implements ClientService {

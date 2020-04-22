@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.zy.zyras.ras.utils;
 
 import cn.whl.commonutils.token.RasEqualityModeToken;
@@ -13,8 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Administrator
+ * requestToken生成工具
+ * @author wuhailong
  */
 public class RequestTokenUtils {
     
