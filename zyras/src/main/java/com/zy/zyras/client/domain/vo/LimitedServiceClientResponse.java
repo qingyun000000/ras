@@ -14,11 +14,6 @@ import java.util.Set;
 public class LimitedServiceClientResponse {
     
     /*
-     * 服务名（组名，一个组包含多个实例） 
-     */
-    private String name;
-    
-    /*
     * 唯一名（实例名，单一客户端）
     */
     private String uniName;
@@ -30,14 +25,6 @@ public class LimitedServiceClientResponse {
     
     //接口列表
     private Set<String> interList;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getUniName() {
         return uniName;

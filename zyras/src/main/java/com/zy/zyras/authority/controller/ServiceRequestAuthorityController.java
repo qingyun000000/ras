@@ -5,7 +5,7 @@ import cn.whl.commonutils.service.result.ResultParam;
 import cn.whl.commonutils.service.result.ServiceResult;
 import cn.whl.commonutils.service.result.ServiceResultTool;
 import cn.whl.commonutils.verificate.VerificateTool;
-import com.zy.zyras.authority.domain.vo.ServiceRequestTokenRequest;
+import com.zy.zyras.authority.domain.vo.RequestTokenRequest;
 import com.zy.zyras.authority.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +43,7 @@ public class ServiceRequestAuthorityController {
      * @return 
      */
     @GetMapping("/token")
-    public ServiceResult serviceRequestToken(ServiceRequestTokenRequest request){
+    public ServiceResult serviceRequestToken(RequestTokenRequest request){
         ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
             if(VerificateTool.isEmpty(request.getToken())){
                 throw new NullException("输入token");

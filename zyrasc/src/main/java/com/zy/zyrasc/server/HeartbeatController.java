@@ -1,6 +1,7 @@
 package com.zy.zyrasc.server;
 
-import com.zy.zyrasc.status.ClientStatus;
+import com.zy.zyrasc.client.ClientStatus;
+import com.zy.zyrasc.client.Clients;
 import com.zy.zyrasc.vo.HeartbeatResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class HeartbeatController {
     
     @PostMapping("/zyras/heartbeat")
-    public HeartbeatResponse heartbeat(){
+    public HeartbeatResponse heartbeat(String ras){
         HeartbeatResponse response = new HeartbeatResponse();
         response.setSuccess(true);
-        response.setToken(ClientStatus.getToken());
+        response.setToken(Clients.getClientStatusMap().get(ras).getToken());
         return response;
     }
 }

@@ -22,8 +22,14 @@ public @interface RemoteService {
     String value() default "remote";
     
     /**
+     * 注册中心名
+     * @return
+     */
+    String ras();
+    
+    /**
      * 远程服务名
      * @return
      */
-    String serviceName();
+    String service();
 }

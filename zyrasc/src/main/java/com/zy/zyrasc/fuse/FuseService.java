@@ -1,6 +1,7 @@
 package com.zy.zyrasc.fuse;
 
-import com.zy.zyrasc.pool.ServicePool;
+import com.zy.zyrasc.client.Clients;
+import com.zy.zyrasc.client.ServicePool;
 import com.zy.zyrasc.vo.ServiceClient;
 import java.util.List;
 
@@ -12,16 +13,23 @@ public class FuseService {
     
     /**
      * 熔断状态
+     * @param ras
      * @param serviceName
+     * @param url
      * @return 
      */
-    public static boolean fuse(String serviceName){
+    public static boolean fuse(String ras, String serviceName, String url){
         
-        //新服务不熔断（服务的全部客户端掉线完后，视为新服务）
-        if(!ServicePool.containsService(serviceName)){
+        ServicePool pool = Clients.getServicePoolMap().get(ras);
+        if(pool == null){
             return false;
         }
-        List<ServiceClient> service = ServicePool.getServiceForName(serviceName);
+        
+        //新服务不熔断（服务的全部客户端掉线完后，视为新服务）
+        if(!pool.containsService(serviceName)){
+            return false;
+        }
+        List<ServiceClient> service = pool.getServiceForName(serviceName, url);
         if(service.isEmpty()){
             return true;
         }else{

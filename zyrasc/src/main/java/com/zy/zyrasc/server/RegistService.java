@@ -1,73 +1,93 @@
 package com.zy.zyrasc.server;
 
 import com.alibaba.fastjson.JSON;
-import com.zy.zyrasc.status.ClientStatus;
+import com.zy.zyrasc.client.ClientStatus;
+import com.zy.zyrasc.client.Clients;
+import com.zy.zyrasc.enums.ClientType;
+import com.zy.zyrasc.enums.ServiceType;
 import com.zy.zyrasc.utils.HttpUtil;
 import com.zy.zyrasc.vo.RegistResponse;
 import com.zy.zyrasc.vo.ServiceResult;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Component;
+import java.util.Set;
 
 /**
- * 服务发现
+ * 服务注册
  * @author wuhailong
  * @createTime 2020-03-27
  * @updateTime 2020-03-27
  */
-@Component
 public class RegistService {
 
-    public static boolean regist(String type, String name, String uniName, String serviceType, String interList, String rasUrl) throws Exception {
+    public static void regist(ClientType type, List<ClientStatus> clientStatuses) throws Exception {
+        for(ClientStatus status : clientStatuses){
+            regist(type, status.getName(), status.getUniName(), status.getServiceType(), status.getInterList(), status.getRasUrl());
+        }
+    }
+    
+    public static void regist(ClientType type, String name, String uniName, ServiceType serviceType, Set<String> interList, String rasUrl) throws Exception {
         String result = null;
 
         Map<String, String> params = new HashMap<>();
-        params.put("clientType", type);
+        params.put("clientType", type.name());
         params.put("name", name);
         if (uniName != null && !"".equals(uniName.trim())) {
             params.put("uniName", uniName);
         }
-        if ("service".equals(type)) {
-            params.put("serviceType", serviceType);
+        if (type == ClientType.service) {
+            params.put("serviceType", serviceType.name());
             if ("limited".equals(serviceType)) {
-                params.put("interList", interList);
+                String interListString = "";
+                for(String str : interList){
+                    interListString = interListString + "," + str;
+                }
+                params.put("interList", interListString.substring(1));
             }
             result = HttpUtil.doPost(rasUrl + "/client/regist/serviceRegist", params);
-        } else if ("customer".equals(type)) {
+        } else if (type == ClientType.customer) {
             try{
                 result = HttpUtil.doPost(rasUrl + "/client/regist/customerRegist", params);
             }catch(Exception ex){
                 System.out.println("暂时无法连接");
             }
-        } else if ("serviceAndCustomerRegist".equals(type)) {
-            params.put("serviceType", serviceType);
-            if ("limited".equals(serviceType)) {
-                params.put("interList", interList);
+        } else if (type == ClientType.serviceAndCustomer) {
+            params.put("serviceType", serviceType.name());
+            if(serviceType == ServiceType.limited){
+                String interListString = "";
+                for(String str : interList){
+                    interListString = interListString + "," + str;
+                }
+                params.put("interList", interListString.substring(1));
             }
             result = HttpUtil.doPost(rasUrl + "/client/regist/serviceAndCustomerRegist", params);
-        } else if ("gateway".equals(type)) {
+        } else if (type == ClientType.gateway) {
             result = HttpUtil.doPost(rasUrl + "/client/regist/gatewayRegist", params);
         } else {
-            if (serviceType != null && !"".equals(serviceType.trim())) {
-                params.put("serviceType", serviceType);
-            }
-            if ("limited".equals(serviceType)) {
-                params.put("interList", interList);
+            params.put("serviceType", serviceType.name());
+            if (serviceType == ServiceType.limited) {
+                String interListString = "";
+                for(String str : interList){
+                    interListString = interListString + "," + str;
+                }
+                params.put("interList", interListString.substring(1));
             }
             result = HttpUtil.doPost(rasUrl + "/client/regist/regist", params);
         }
 
         //解析报文
         System.out.println("注册返回报文：" + result);
+        
         ServiceResult result1 = JSON.parseObject(result, ServiceResult.class);
 
         if(result1.isSuccess()){
             System.out.println("注册成功！");
             RegistResponse registResponse = (RegistResponse)result1.getData();
-            ClientStatus.setType(type);
-            ClientStatus.setRasUrl(rasUrl);
-            ClientStatus.setToken(registResponse.getToken());
-            return true;
+            ClientStatus status = new ClientStatus();
+            status.setRasUrl(rasUrl);
+            status.setToken(registResponse.getToken());
+            Clients.getClientStatusMap().put(registResponse.getRas(), status);
         }else{
             System.out.println("注册失败：" + result1.getMessage());
             throw new Exception("注册失败");

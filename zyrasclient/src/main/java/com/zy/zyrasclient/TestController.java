@@ -2,6 +2,7 @@ package com.zy.zyrasclient;
 
 import com.zy.zyrasclient.remote.TestRemoteClass;
 import com.zy.zyrasclient.remote.TestRemoteClass2;
+import java.util.Map;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,8 @@ public class TestController {
     private TestRemoteClass2 remoteClass2;
     
     @RequestMapping("/test")
-    public String test(){
+    public Map<String, String> test(){
+        System.out.println("test方法");
         return remoteClass.test();
     }
     

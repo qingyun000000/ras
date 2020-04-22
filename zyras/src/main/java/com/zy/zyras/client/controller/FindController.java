@@ -48,4 +48,19 @@ public class FindController {
         return result;
     }
     
+    /**
+     * 全部服务发现接口
+     * @param findServiceRequest
+     * @return 
+     */
+    @PostMapping("/allService")
+    public ServiceResult findAllService(FindServiceRequest findServiceRequest){
+        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
+            if(VerificateTool.isEmpty(findServiceRequest.getToken())){
+                throw new NullPointerException("输入token");
+            }
+        }, ()->clientService.findAllService(findServiceRequest.getToken()));
+        return result;
+    }
+    
 }

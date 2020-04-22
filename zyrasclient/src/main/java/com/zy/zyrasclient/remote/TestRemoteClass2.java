@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.zy.zyrasclient.remote;
 
 import com.zy.zyrasc.annotation.RemoteService;
@@ -13,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author wuhailong
  */
-@RemoteService(serviceName = "comm5")
+@RemoteService(ras = "ras", service = "comm5")
 public interface TestRemoteClass2 {
     
     @RequestMapping(value = "/url2", method = RequestMethod.GET)

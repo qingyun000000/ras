@@ -15,7 +15,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,7 +39,7 @@ public class HttpUtil {
 
     /**
      * get请求
-     *
+     * @param url
      * @return
      */
     public static String doGet(String url) {
@@ -66,15 +65,15 @@ public class HttpUtil {
 
 
     /**
-     * * get请求，参数放在map里
-     * * @param url 请求地址
-     * * @param map 参数map
-     * * @return 响应
+     * get请求，参数放在map里
+     * @param url 请求地址
+     * @param map 参数map
+     * @return 响应
      */
     public static String doGetByMap(String url, Map<String, Object> map) {
         String result = null;
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        List<NameValuePair> pairs = new ArrayList<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             pairs.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
         }
@@ -89,11 +88,7 @@ public class HttpUtil {
                 result = entityToString(entity);
             }
             return result;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -142,11 +137,11 @@ public class HttpUtil {
             if (code == 200) {    //请求成功
                 in = new BufferedReader(new InputStreamReader(response.getEntity()
                         .getContent(), "utf-8"));
-                StringBuffer sb = new StringBuffer("");
+                StringBuilder sb = new StringBuilder("");
                 String line = "";
                 String NL = System.getProperty("line.separator");
                 while ((line = in.readLine()) != null) {
-                    sb.append(line + NL);
+                    sb.append(line).append(NL);
                 }
 
                 in.close();
@@ -156,7 +151,7 @@ public class HttpUtil {
                 System.out.println("状态码：" + code);
                 return null;
             }
-        } catch (Exception e) {
+        } catch (IOException | UnsupportedOperationException | URISyntaxException e) {
             e.printStackTrace();
 
             return null;

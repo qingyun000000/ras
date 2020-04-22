@@ -32,14 +32,15 @@ public class ProxyFactoryBean<T> implements FactoryBean{
                 
                 //获取
                 RemoteService rs = interfaceClass.getAnnotation(RemoteService.class);
-                System.out.println("服务名：" + rs.serviceName());
+                System.out.println("注册中心：" + rs.ras());
+                System.out.println("服务名：" + rs.service());
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                 System.out.println("服务url:" + annotation.value()[0] + ", 请求类型" + annotation.method()[0]);
                 
                 Object response;
                 
                 //熔断判断
-                boolean fuse = FuseService.fuse(rs.serviceName());
+                boolean fuse = FuseService.fuse(rs.ras(), rs.service(), annotation.value()[0]);
                 if(fuse){
                     //已熔断,降级方法执行
                     response = new SecondaryService().secondaryService(method, o, os,interfaceClass);
@@ -50,7 +51,7 @@ public class ProxyFactoryBean<T> implements FactoryBean{
                     //调用服务（包括负载均衡），转request模块处理
                     Class<?> returnType = method.getReturnType();
                     try{
-                        response = ServiceRequestService.request(returnType, rs.serviceName(),annotation.value()[0], annotation.method()[0], params);
+                        response = ServiceRequestService.request(returnType, rs.ras(), rs.service(), annotation.value()[0], annotation.method()[0], params);
                     }catch(Exception ex){
                         //服务失败，降级方法执行
                         response = new SecondaryService().secondaryService(method, o, os,interfaceClass);

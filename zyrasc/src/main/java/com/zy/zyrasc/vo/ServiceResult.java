@@ -6,7 +6,7 @@ package com.zy.zyrasc.vo;
  */
 public class ServiceResult {
     
-     private boolean success;
+    private boolean success;
     
     private String message;
     

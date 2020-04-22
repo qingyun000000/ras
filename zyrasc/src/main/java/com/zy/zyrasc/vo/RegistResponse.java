@@ -1,22 +1,22 @@
 package com.zy.zyrasc.vo;
 
+import com.zy.zyrasc.enums.ServiceType;
+
 /**
  * 返回报文：注册
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class RegistResponse {
     
     /*
     * 注册中心名
     */
-    private String rasName;
+    private String ras;
     
     /*
     * 客户端类型
     */
-    private String clientType;
+    private ServiceType clientType;
     
     /*
      * 服务名（组名，一个组包含多个实例） 
@@ -38,19 +38,19 @@ public class RegistResponse {
     */
     private String token;
 
-    public String getRasName() {
-        return rasName;
+    public String getRas() {
+        return ras;
     }
 
-    public void setRasName(String rasName) {
-        this.rasName = rasName;
+    public void setRas(String ras) {
+        this.ras = ras;
     }
 
-    public String getClientType() {
+    public ServiceType getClientType() {
         return clientType;
     }
 
-    public void setClientType(String clientType) {
+    public void setClientType(ServiceType clientType) {
         this.clientType = clientType;
     }
 

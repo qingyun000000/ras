@@ -6,7 +6,7 @@ package com.zy.zyras.authority.domain.vo;
  * @createTime 2020-03-27
  * @updateTime 2020-03-27
  */
-public class ServiceRequestTokenRequest {
+public class RequestTokenRequest {
     
     /*
     * token 身份识别标识

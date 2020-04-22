@@ -2,6 +2,8 @@ package com.zy.zyrasc.request;
 
 import com.zy.zyrasc.balance.LoadBalanceService;
 import com.alibaba.fastjson.JSON;
+import com.zy.zyrasc.client.Clients;
+import com.zy.zyrasc.exception.ServiceNotExistException;
 import com.zy.zyrasc.utils.HttpUtil;
 import com.zy.zyrasc.vo.ServiceClient;
 import java.util.Map;
@@ -17,6 +19,7 @@ public class ServiceRequestService {
      * 调用服务方法
      * @param <T>
      * @param clazz
+     * @param ras
      * @param serviceName
      * @param url
      * @param method
@@ -24,16 +27,19 @@ public class ServiceRequestService {
      * @return 
      * @throws java.lang.Exception 
      */
-    public static <T> T request(Class<T> clazz, String serviceName, String url, RequestMethod method, Map<String, Object> params) throws Exception{
+    public static <T> T request(Class<T> clazz, String ras, String serviceName, String url, RequestMethod method, Map<String, Object> params) throws Exception{
         
         //负载均衡
-        ServiceClient client = LoadBalanceService.getServiceClient(serviceName);
+        ServiceClient client = LoadBalanceService.getServiceClient(ras, serviceName, url);
         
         if(client != null){
-            T response = request0(method, client, url, params, clazz);
+            //补充ras, requestToken信息
+            params.put("zyras", ras);
+            params.put("zyrasRequestToken", Clients.getClientStatusMap().get(ras).getRequestToken1());
+            T response = request(method, client, url, params, clazz);
             return response;
         }else{
-            throw new Exception("可用的服务客户端");
+            throw new ServiceNotExistException(ras + "_" + serviceName + "不存在");
         }
         
     }
@@ -48,7 +54,7 @@ public class ServiceRequestService {
      * @param clazz
      * @return 
      */
-    private static <T> T request0(RequestMethod method, ServiceClient client, String url, Map<String, Object> params, Class<T> clazz) {
+    private static <T> T request(RequestMethod method, ServiceClient client, String url, Map<String, Object> params, Class<T> clazz) {
         String result = null;
         if(method == RequestMethod.GET){
             result = HttpUtil.doGet(client.getUrl() + url);

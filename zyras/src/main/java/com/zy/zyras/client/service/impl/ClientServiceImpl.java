@@ -13,6 +13,8 @@ import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;
 import com.zy.zyras.client.domain.LimitedServiceClient;
 import com.zy.zyras.client.domain.ServiceClient;
+import com.zy.zyras.client.domain.enums.ClientType;
+import com.zy.zyras.client.domain.enums.ServiceType;
 import com.zy.zyras.client.domain.vo.CustomerResponse;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.domain.vo.LimitedServiceClientResponse;
@@ -33,9 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.print.attribute.standard.Severity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -104,7 +103,7 @@ public class ClientServiceImpl implements ClientService {
                 if (contains == 0) {
                     serviceClient = this.limitedServiceRegist(pool, request);
                 }
-                response.setClientType("limitedService");
+                response.setServiceType(ServiceType.limited);
             }else{
                 //默认，service类型注册
                 if (contains == 1) {
@@ -120,12 +119,13 @@ public class ClientServiceImpl implements ClientService {
                 if (contains == 0) {
                     serviceClient =  this.serviceRegist(pool, request);
                 }
-                response.setClientType("service");
+                response.setServiceType(ServiceType.all);
             }
         }finally{
             updateServiceLock.unlock();
         }
         
+        response.setClientType(ClientType.service);
         response.setName(serviceClient.getName());
         response.setUniName(serviceClient.getUniName());
         response.setUrl(serviceClient.getUrl());
@@ -171,7 +171,7 @@ public class ClientServiceImpl implements ClientService {
             updateCustomerLock.unlock();
         }
         
-        response.setClientType("customer");
+        response.setClientType(ClientType.customer);
         response.setName(customerClient.getName());
         response.setUniName(customerClient.getUniName());
         response.setUrl(customerClient.getUrl());
@@ -188,6 +188,7 @@ public class ClientServiceImpl implements ClientService {
         
         String uniName = serviceRegist.getUniName();
         String token = serviceRegist.getToken();
+        ServiceType serviceType = serviceRegist.getServiceType();
         
         //以下流程基本和customerRegist一致
         String name = request.getName();
@@ -215,7 +216,8 @@ public class ClientServiceImpl implements ClientService {
             updateCustomerLock.unlock();
         }
         
-        response.setClientType("serviceAndCustomer");
+        response.setClientType(ClientType.serviceAndCustomer);
+        response.setServiceType(serviceType);
         response.setName(customerClient.getName());
         response.setUniName(customerClient.getUniName());
         response.setUrl(customerClient.getUrl());
@@ -262,7 +264,7 @@ public class ClientServiceImpl implements ClientService {
             updateGatewayLock.unlock();
         }
         
-        response.setClientType("gateway");
+        response.setClientType(ClientType.gateway);
         response.setName(gatewayClient.getName());
         response.setUniName(gatewayClient.getUniName());
         response.setUrl(gatewayClient.getUrl());
@@ -443,6 +445,56 @@ public class ClientServiceImpl implements ClientService {
 
         return serviceClient;
     }
+    
+    @Override
+    public List<ServiceResponse> findAllService(String token) throws TokenWrongException {
+        ClientPool pool = ClientPool.getInstance();
+        
+        /*
+         * 客户端校验
+         */
+        boolean auth = pool.containsCustomerOrGatewayByToken(token);
+        if(!auth){
+            throw new TokenWrongException();
+        }
+        
+        List<ServiceResponse> responses = new ArrayList<>();
+        Map<String, Map<String, ServiceClient>> allService = pool.getAllService();
+        for(String serviceName : allService.keySet()){
+            ServiceResponse response = new ServiceResponse();
+            Map<String, ServiceClient> service = allService.get(serviceName);
+            response.setName(serviceName);
+            response.setServiceType(ServiceType.all);
+            List<ServiceClientResponse> serviceClients = new ArrayList<>();
+            for(ServiceClient client : service.values()){
+                ServiceClientResponse serviceClient = new ServiceClientResponse();
+                serviceClient.setUniName(client.getUniName());
+                serviceClient.setUrl(client.getUrl());
+                serviceClients.add(serviceClient);
+            }
+            response.setServiceClients(serviceClients);
+            responses.add(response);
+        }
+        Map<String, Map<String, LimitedServiceClient>> allLimitedService = pool.getAllLimitedService();
+        for(String serviceName : allLimitedService.keySet()){
+            ServiceResponse response = new ServiceResponse();
+            Map<String, LimitedServiceClient> service = allLimitedService.get(serviceName);
+            response.setName(serviceName);
+            response.setServiceType(ServiceType.limited);
+            List<LimitedServiceClientResponse> serviceClients = new ArrayList<>();
+            for(LimitedServiceClient client : service.values()){
+                LimitedServiceClientResponse serviceClient = new LimitedServiceClientResponse();
+                serviceClient.setUniName(client.getUniName());
+                serviceClient.setUrl(client.getUrl());
+                serviceClient.setInterList(client.getInterList());
+                serviceClients.add(serviceClient);
+            }
+            response.setLimitedServiceClients(serviceClients);
+            responses.add(response);
+        }
+        
+        return responses;
+    }
 
     @Override
     public ServiceResponse findService(FindServiceRequest findServiceRequest) throws TokenWrongException, NotExistException {
@@ -464,11 +516,10 @@ public class ClientServiceImpl implements ClientService {
         Map<String, ServiceClient> service = pool.getService(name);
         if(service != null){
             response.setName(name);
-            response.setServiceType("all");
+            response.setServiceType(ServiceType.all);
             List<ServiceClientResponse> serviceClients = new ArrayList<>();
             for(ServiceClient client : service.values()){
                 ServiceClientResponse serviceClient = new ServiceClientResponse();
-                serviceClient.setName(client.getName());
                 serviceClient.setUniName(client.getUniName());
                 serviceClient.setUrl(client.getUrl());
                 serviceClients.add(serviceClient);
@@ -478,13 +529,13 @@ public class ClientServiceImpl implements ClientService {
             Map<String, LimitedServiceClient> limitService = pool.getLimitService(name);
             if(limitService != null){
                 response.setName(name);
-                response.setServiceType("limited");
+                response.setServiceType(ServiceType.limited);
                 List<LimitedServiceClientResponse> serviceClients = new ArrayList<>();
                 for(LimitedServiceClient client : limitService.values()){
                     LimitedServiceClientResponse serviceClient = new LimitedServiceClientResponse();
-                    serviceClient.setName(client.getName());
                     serviceClient.setUniName(client.getUniName());
                     serviceClient.setUrl(client.getUrl());
+                    serviceClient.setInterList(client.getInterList());
                     serviceClients.add(serviceClient);
                 }
                 response.setLimitedServiceClients(serviceClients);
@@ -563,5 +614,6 @@ public class ClientServiceImpl implements ClientService {
         }
         LoggerTools.log4j_write.info("心跳连接检测完成");
     }
+
 
 }

@@ -1,19 +1,18 @@
 package com.zy.zyrasc.vo;
 
+import com.zy.zyrasc.enums.ServiceType;
 import java.util.List;
 
 /**
  * 返回报文：服务
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class ServiceResponse {
     
     /*
     * 服务类型（all, limited)
     */
-    private String serviceType;
+    private ServiceType serviceType;
     
     /*
      * 服务名（组名，一个组包含多个实例） 
@@ -30,11 +29,11 @@ public class ServiceResponse {
     */
     private List<LimitedServiceClient> limitedServiceClients;
 
-    public String getServiceType() {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(String serviceType) {
+    public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 

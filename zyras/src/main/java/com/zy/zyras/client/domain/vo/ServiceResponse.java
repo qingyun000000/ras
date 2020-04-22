@@ -2,6 +2,7 @@ package com.zy.zyras.client.domain.vo;
 
 import com.zy.zyras.client.domain.LimitedServiceClient;
 import com.zy.zyras.client.domain.ServiceClient;
+import com.zy.zyras.client.domain.enums.ServiceType;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class ServiceResponse {
     /*
     * 服务类型（all, limited)
     */
-    private String serviceType;
+    private ServiceType serviceType;
     
     /*
      * 服务名（组名，一个组包含多个实例） 
@@ -32,11 +33,11 @@ public class ServiceResponse {
     */
     private List<LimitedServiceClientResponse> limitedServiceClients;
 
-    public String getServiceType() {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(String serviceType) {
+    public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 

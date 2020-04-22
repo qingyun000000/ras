@@ -240,12 +240,33 @@ public class ClientPool {
         return false;
     }
 
+    /**
+     * 获取所有customer
+     * @return 
+     */
     public Map<String, CustomerClient> getAllCustomer() {
         return customerClients;
+    }
+    
+    /**
+     * 获取所有serviceClients
+     * @return 
+     */
+    public Map<String, Map<String, ServiceClient>> getAllService() {
+        return serviceClients;
+    }
+    
+    /**
+     * 获取所有limitedServiceClients
+     * @return 
+     */
+    public Map<String, Map<String, LimitedServiceClient>> getAllLimitedService() {
+        return limitedServiceClients;
     }
 
     /**
      * 获取所有客户端
+     * @return 
      */
     public Set<Client> getAllClients() {
         Set<Client> clients = new HashSet<>();

@@ -1,4 +1,4 @@
-package com.zy.zyrasc.pool;
+package com.zy.zyrasc.client;
 
 import com.zy.zyrasc.vo.LimitedServiceClient;
 import com.zy.zyrasc.vo.ServiceClient;
@@ -14,18 +14,18 @@ public class ServicePool {
     /*
     * 服务提供方客户端列表
      */
-    private static volatile Map<String,List<ServiceClient>> serviceClients;
+    private volatile Map<String,List<ServiceClient>> serviceClients;
 
     /*
     * 有限服务提供方客户端列表
      */
-    private static volatile Map<String, List<LimitedServiceClient>> limitedServiceClients;
+    private volatile Map<String, List<LimitedServiceClient>> limitedServiceClients;
 
     /**
      * 获取所有非限制服务
      * @return
      */
-    public static Map<String, List<ServiceClient>> getServiceClients() {
+    public Map<String, List<ServiceClient>> getServiceClients() {
         return serviceClients;
     }
 
@@ -33,7 +33,7 @@ public class ServicePool {
      * 获取所有限制服务
      * @return
      */
-    public static Map<String, List<LimitedServiceClient>> getLimitedServiceClients() {
+    public Map<String, List<LimitedServiceClient>> getLimitedServiceClients() {
         return limitedServiceClients;
     }
 
@@ -42,7 +42,7 @@ public class ServicePool {
      * @param name
      * @param scs
      */
-    public static void addService(String name, List<ServiceClient> scs) {
+    public void addService(String name, List<ServiceClient> scs) {
         serviceClients.put(name, scs);
     }
 
@@ -51,22 +51,23 @@ public class ServicePool {
      * @param name
      * @param lscs 
      */
-    public static void addLimitedService(String name, List<LimitedServiceClient> lscs) {
+    public void addLimitedService(String name, List<LimitedServiceClient> lscs) {
         limitedServiceClients.put(name, lscs);
     }
     
     /**
      * 获取指定服务（的client列表）
      * @param name
+     * @param url
      * @return 
      */
-    public static List<ServiceClient> getServiceForName(String name){
+    public List<ServiceClient> getServiceForName(String name, String url){
         List<ServiceClient> response = new ArrayList<>();
         List<ServiceClient> service = serviceClients.get(name);
         if(service == null || service.isEmpty()){
             List<LimitedServiceClient> service2 = limitedServiceClients.get(name);
             for(LimitedServiceClient client : service2){
-                if(client.getFused() == 0){
+                if(client.getFused() == 0 || client.getInterList().contains(url)){
                     response.add(client);
                 }
             }
@@ -86,7 +87,7 @@ public class ServicePool {
      * @param name
      * @return 
      */
-    public static boolean containsService(String name) {
+    public boolean containsService(String name) {
         boolean contains = limitedServiceClients.containsKey(name);
         if(contains == false){
             return serviceClients.containsKey(name);

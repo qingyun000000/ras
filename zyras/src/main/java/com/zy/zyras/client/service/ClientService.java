@@ -70,6 +70,13 @@ public interface ClientService {
      * @throws cn.whl.commonutils.exception.ServiceRunException 
      */
     public RegistResponse gatewayRegist(RegistRequest request) throws ExistException, ServiceRunException;
+    
+    /**
+     * 所有服务发现
+     * @param token
+     * @return 
+     */
+    public List<ServiceResponse> findAllService(String token) throws TokenWrongException;
 
     /**
      * 服务发现
@@ -94,5 +101,10 @@ public interface ClientService {
      */
     public boolean removeClient(Client client);
 
+    /**
+     * 心跳
+     */
     public void heartbeat();
+
+    
 }

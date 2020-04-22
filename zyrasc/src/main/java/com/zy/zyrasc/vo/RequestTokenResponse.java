@@ -1,4 +1,4 @@
-package com.zy.zyras.authority.domain.vo;
+package com.zy.zyrasc.vo;
 
 /**
  * 报文封装：服务调用token获取调用
@@ -6,7 +6,7 @@ package com.zy.zyras.authority.domain.vo;
  * @createTime 2020-03-27
  * @updateTime 2020-03-27
  */
-public class ServiceRequestTokenResponse {
+public class RequestTokenResponse {
     
     /*
     * 注册中心名
@@ -16,7 +16,7 @@ public class ServiceRequestTokenResponse {
     /*
     * 服务调用token
     */
-    private String serviceRequestToken;
+    private String requestToken;
 
     public String getRasName() {
         return rasName;
@@ -26,12 +26,12 @@ public class ServiceRequestTokenResponse {
         this.rasName = rasName;
     }
 
-    public String getServiceRequestToken() {
-        return serviceRequestToken;
+    public String getRequestToken() {
+        return requestToken;
     }
 
-    public void setServiceRequestToken(String serviceRequestToken) {
-        this.serviceRequestToken = serviceRequestToken;
+    public void setRequestToken(String requestToken) {
+        this.requestToken = requestToken;
     }
     
 }

@@ -1,5 +1,8 @@
 package com.zy.zyras.client.domain.vo;
 
+import com.zy.zyras.client.domain.enums.ClientType;
+import com.zy.zyras.client.domain.enums.ServiceType;
+
 /**
  * 返回报文：注册
  * @author wuhailong
@@ -16,7 +19,12 @@ public class RegistResponse {
     /*
     * 客户端类型
     */
-    private String clientType;
+    private ClientType clientType;
+    
+    /*
+    * 客户端类型
+    */
+    private ServiceType serviceType;
     
     /*
      * 服务名（组名，一个组包含多个实例） 
@@ -46,12 +54,20 @@ public class RegistResponse {
         this.rasName = rasName;
     }
 
-    public String getClientType() {
+    public ClientType getClientType() {
         return clientType;
     }
 
-    public void setClientType(String clientType) {
+    public void setClientType(ClientType clientType) {
         this.clientType = clientType;
+    }
+
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
     }
 
     public String getName() {

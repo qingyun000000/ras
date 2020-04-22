@@ -11,7 +11,7 @@ import com.zy.zyrasc.annotation.RemoteService;
  *
  * @author wuhailong
  */
-@RemoteService(serviceName = "cus1")
+@RemoteService(ras = "ras", service = "cus1")
 public interface IRemote {
     
 }

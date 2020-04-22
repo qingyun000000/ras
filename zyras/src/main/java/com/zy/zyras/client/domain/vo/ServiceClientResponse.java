@@ -13,11 +13,6 @@ import java.util.List;
 public class ServiceClientResponse {
     
     /*
-     * 服务名（组名，一个组包含多个实例） 
-     */
-    private String name;
-    
-    /*
     * 唯一名（实例名，单一客户端）
     */
     private String uniName;
@@ -26,14 +21,6 @@ public class ServiceClientResponse {
     * 地址（客户端地址）
     */
     private String url; 
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getUniName() {
         return uniName;
