@@ -62,8 +62,8 @@ public class RegistController {
             if(VerificateTool.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
-            request.setUrl("http://" + req.getRemoteAddr() + ":" + req.getRemotePort());
+            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.regist(request));
         return result;
     }
@@ -90,8 +90,8 @@ public class RegistController {
             if(VerificateTool.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
-            request.setUrl(req.getRemoteAddr() + ":" + req.getRemotePort());
+            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.serviceRegist(request));
         return result;
     }
@@ -99,6 +99,7 @@ public class RegistController {
     /**
      * 服务调用方注册接口
      * @param request
+     * @param req
      * @return 
      */
     @PostMapping("/customerRegist")
@@ -112,8 +113,8 @@ public class RegistController {
                 throw new NullPointerException("输入客户端名");
             }
             LoggerTools.log4j_write.info("客户端" + request.getName() + "调用接入 ");
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
-            request.setUrl(req.getRemoteAddr() + ":" + req.getRemotePort());
+            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.customerRegist(request));
         return result;
     }
@@ -140,8 +141,8 @@ public class RegistController {
             if(VerificateTool.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
-            request.setUrl(req.getRemoteAddr() + ":" + req.getRemotePort());
+            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.serviceAndCunstomerRegist(request));
         return result;
     }
@@ -161,8 +162,8 @@ public class RegistController {
             if(VerificateTool.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + req.getRemotePort());
-            request.setUrl(req.getRemoteAddr() + ":" + req.getRemotePort());
+            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.gatewayRegist(request));
         return result;
     }

@@ -12,7 +12,7 @@ public class RegistResponse {
     /*
     * 注册中心名
     */
-    private String rasName;
+    private String ras;
     
     /*
     * 客户端类型
@@ -44,12 +44,12 @@ public class RegistResponse {
     */
     private String token;
 
-    public String getRasName() {
-        return rasName;
+    public String getRas() {
+        return ras;
     }
 
-    public void setRasName(String rasName) {
-        this.rasName = rasName;
+    public void setRas(String ras) {
+        this.ras = ras;
     }
 
     public ClientType getClientType() {

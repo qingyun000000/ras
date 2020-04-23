@@ -60,6 +60,7 @@ public class FindServiceService {
             Map<String, String> params = new HashMap<>();
             params.put("token", token);
             String result = HttpUtil.doPost(rasUrl + "/client/find/allService", params);
+            System.out.println(result);
             List<ServiceResponse> responses = (List<ServiceResponse>) (JSON.parseObject(result, ServiceResult.class).getData());
             for (ServiceResponse response : responses) {
                 if ("limited".equals(response.getServiceType())) {

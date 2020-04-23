@@ -8,6 +8,7 @@ import cn.whl.commonutils.exception.TokenWrongException;
 import cn.whl.commonutils.log.LoggerTools;
 import cn.whl.commonutils.token.TokenTool;
 import cn.whl.commonutils.verificate.VerificateTool;
+import com.alibaba.fastjson.JSON;
 import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;
@@ -18,6 +19,7 @@ import com.zy.zyras.client.domain.enums.ServiceType;
 import com.zy.zyras.client.domain.vo.CustomerResponse;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.domain.vo.LimitedServiceClientResponse;
+import com.zy.zyras.client.domain.vo.HeartbeatResponse;
 import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.domain.vo.RegistResponse;
 import com.zy.zyras.client.domain.vo.ServiceClientResponse;
@@ -39,6 +41,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 业务层实现：客户端
+ *
  * @author wuhailong
  */
 @Service
@@ -78,10 +81,10 @@ public class ClientServiceImpl implements ClientService {
         ClientPool pool = ClientPool.getInstance();
         RegistResponse response = new RegistResponse();
         ServiceClient serviceClient = null;
-        
+
         updateServiceLock.lock();
-        
-        try{
+
+        try {
             int contains = pool.serviceContainsName(name);
             if (contains == -1) {
                 //服务在两个列表中重复出现， 已经异常
@@ -102,7 +105,12 @@ public class ClientServiceImpl implements ClientService {
                     serviceClient = this.limitedServiceRegist(pool, request);
                 }
                 response.setServiceType(ServiceType.limited);
-            }else{
+                try {
+                    serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                } catch (Exception ex) {
+                    throw new ServiceRunException("token生成失败");
+                }
+            } else {
                 //默认，service类型注册
                 if (contains == 1) {
                     //在service中已经存在
@@ -115,20 +123,26 @@ public class ClientServiceImpl implements ClientService {
 
                 }
                 if (contains == 0) {
-                    serviceClient =  this.serviceRegist(pool, request);
+                    serviceClient = this.serviceRegist(pool, request);
                 }
                 response.setServiceType(ServiceType.all);
+                try {
+                    serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                } catch (Exception ex) {
+                    throw new ServiceRunException("token生成失败");
+                }
             }
-        }finally{
+        } finally {
             updateServiceLock.unlock();
         }
-        
+
         response.setClientType(ClientType.service);
         response.setName(serviceClient.getName());
         response.setUniName(serviceClient.getUniName());
         response.setUrl(serviceClient.getUrl());
-        response.setRasName(RasUtils.getRasName());
-        
+        response.setRas(RasUtils.getGroupName());
+        response.setToken(serviceClient.getToken());
+
         return response;
     }
 
@@ -138,21 +152,21 @@ public class ClientServiceImpl implements ClientService {
         ClientPool pool = ClientPool.getInstance();
         RegistResponse response = new RegistResponse();
         CustomerClient customerClient = null;
-        
+
         updateCustomerLock.lock();
-        
-        try{
+
+        try {
             boolean contains = pool.customerContainsName(name);
             if (contains) {
                 //在customer中已经存在
                 throw new ExistException("服务名在服务消费方中");
-            }else{
+            } else {
                 customerClient = new CustomerClient();
                 customerClient.setName(request.getName());
                 String uniName;
-                if(VerificateTool.notEmpty(request.getUniName())){
+                if (VerificateTool.notEmpty(request.getUniName())) {
                     uniName = request.getUniName();
-                }else{
+                } else {
                     uniName = request.getUrl();
                 }
                 customerClient.setUniName(uniName);
@@ -162,20 +176,20 @@ public class ClientServiceImpl implements ClientService {
                 } catch (Exception ex) {
                     throw new ServiceRunException("token生成失败");
                 }
-                
+
                 pool.addCustomer(customerClient);
             }
-        }finally{
+        } finally {
             updateCustomerLock.unlock();
         }
-        
+
         response.setClientType(ClientType.customer);
         response.setName(customerClient.getName());
         response.setUniName(customerClient.getUniName());
         response.setUrl(customerClient.getUrl());
         response.setToken(customerClient.getToken());
-        response.setRasName(RasUtils.getRasName());
-        
+        response.setRas(RasUtils.getGroupName());
+
         return response;
     }
 
@@ -183,45 +197,45 @@ public class ClientServiceImpl implements ClientService {
     public RegistResponse serviceAndCunstomerRegist(RegistRequest request) throws ServiceRunException, ExistException, InputWrongException {
         //serviceRegist
         RegistResponse serviceRegist = this.serviceRegist(request);
-        
+
         String uniName = serviceRegist.getUniName();
         String token = serviceRegist.getToken();
         ServiceType serviceType = serviceRegist.getServiceType();
-        
+
         //以下流程基本和customerRegist一致
         String name = request.getName();
         ClientPool pool = ClientPool.getInstance();
         RegistResponse response = new RegistResponse();
         CustomerClient customerClient = null;
-        
+
         updateCustomerLock.lock();
-        
-        try{
+
+        try {
             boolean contains = pool.customerContainsName(name);
             if (contains) {
                 //在customer中已经存在
                 throw new ExistException("服务名在服务消费方中");
-            }else{
+            } else {
                 customerClient = new CustomerClient();
                 customerClient.setName(request.getName());
                 customerClient.setUniName(uniName);
                 customerClient.setUrl(request.getUrl());
                 customerClient.setToken(token);
-                
+
                 pool.addCustomer(customerClient);
             }
-        }finally{
+        } finally {
             updateCustomerLock.unlock();
         }
-        
+
         response.setClientType(ClientType.serviceAndCustomer);
         response.setServiceType(serviceType);
         response.setName(customerClient.getName());
         response.setUniName(customerClient.getUniName());
         response.setUrl(customerClient.getUrl());
         response.setToken(customerClient.getToken());
-        response.setRasName(RasUtils.getRasName());
-        
+        response.setRas(RasUtils.getGroupName());
+
         return response;
     }
 
@@ -231,21 +245,21 @@ public class ClientServiceImpl implements ClientService {
         ClientPool pool = ClientPool.getInstance();
         RegistResponse response = new RegistResponse();
         GatewayClient gatewayClient = null;
-        
+
         updateGatewayLock.lock();
-        
-        try{
+
+        try {
             boolean contains = pool.customerContainsName(name);
             if (contains) {
                 //在customer中已经存在
                 throw new ExistException("服务名在网关中");
-            }else{
+            } else {
                 gatewayClient = new GatewayClient();
                 gatewayClient.setName(request.getName());
                 String uniName;
-                if(VerificateTool.notEmpty(request.getUniName())){
+                if (VerificateTool.notEmpty(request.getUniName())) {
                     uniName = request.getUniName();
-                }else{
+                } else {
                     uniName = request.getUrl();
                 }
                 gatewayClient.setUniName(uniName);
@@ -255,25 +269,26 @@ public class ClientServiceImpl implements ClientService {
                 } catch (Exception ex) {
                     throw new ServiceRunException("token生成失败");
                 }
-                
+
                 pool.addGateway(gatewayClient);
             }
-        }finally{
+        } finally {
             updateGatewayLock.unlock();
         }
-        
+
         response.setClientType(ClientType.gateway);
         response.setName(gatewayClient.getName());
         response.setUniName(gatewayClient.getUniName());
         response.setUrl(gatewayClient.getUrl());
         response.setToken(gatewayClient.getToken());
-        response.setRasName(RasUtils.getRasName());
-        
+        response.setRas(RasUtils.getGroupName());
+
         return response;
     }
 
     /**
      * limitedService服务增加实例
+     *
      * @param limitService
      * @param request
      */
@@ -328,9 +343,9 @@ public class ClientServiceImpl implements ClientService {
 
         //加入服务
         String uniName;
-        if(VerificateTool.notEmpty(request.getUniName())){
+        if (VerificateTool.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
-        }else{
+        } else {
             uniName = request.getUrl();
         }
         LimitedServiceClient limitedServiceClient = new LimitedServiceClient();
@@ -343,7 +358,7 @@ public class ClientServiceImpl implements ClientService {
             throw new ServiceRunException("token生成失败");
         }
         limitedServiceClient.setInterList(newInterList);
-        
+
         limitService.put(uniName, limitedServiceClient);
 
         return limitedServiceClient;
@@ -351,7 +366,8 @@ public class ClientServiceImpl implements ClientService {
 
     /**
      * limitedService服务新增服务
-     * @param request 
+     *
+     * @param request
      */
     private LimitedServiceClient limitedServiceRegist(ClientPool pool, RegistRequest request) throws ServiceRunException {
         //interList封装
@@ -362,9 +378,9 @@ public class ClientServiceImpl implements ClientService {
         }
         //加入服务
         String uniName;
-        if(VerificateTool.notEmpty(request.getUniName())){
+        if (VerificateTool.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
-        }else{
+        } else {
             uniName = request.getUrl();
         }
         LimitedServiceClient limitedServiceClient = new LimitedServiceClient();
@@ -379,7 +395,7 @@ public class ClientServiceImpl implements ClientService {
         limitedServiceClient.setInterList(newInterList);
         Map<String, LimitedServiceClient> newLimitedSevice = new HashMap<>();
         newLimitedSevice.put(uniName, limitedServiceClient);
-        
+
         pool.addLimitService(request.getName(), newLimitedSevice);
 
         return limitedServiceClient;
@@ -387,16 +403,17 @@ public class ClientServiceImpl implements ClientService {
 
     /**
      * service服务增加实例
+     *
      * @param service
      * @param request
-     * @return 
+     * @return
      */
     private ServiceClient serviceRegist(Map<String, ServiceClient> service, RegistRequest request) throws ServiceRunException {
         //加入服务
         String uniName;
-        if(VerificateTool.notEmpty(request.getUniName())){
+        if (VerificateTool.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
-        }else{
+        } else {
             uniName = request.getUrl();
         }
         ServiceClient serviceClient = new ServiceClient();
@@ -409,22 +426,23 @@ public class ClientServiceImpl implements ClientService {
             throw new ServiceRunException("token生成失败");
         }
         service.put(uniName, serviceClient);
-        
+
         return serviceClient;
     }
 
     /**
      * service服务新增服务
+     *
      * @param pool
      * @param request
-     * @return 
+     * @return
      */
     private ServiceClient serviceRegist(ClientPool pool, RegistRequest request) throws ServiceRunException {
         //加入服务
         String uniName;
-        if(VerificateTool.notEmpty(request.getUniName())){
+        if (VerificateTool.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
-        }else{
+        } else {
             uniName = request.getUrl();
         }
         ServiceClient serviceClient = new ServiceClient();
@@ -438,33 +456,33 @@ public class ClientServiceImpl implements ClientService {
         }
         Map<String, ServiceClient> newSevice = new HashMap<>();
         newSevice.put(uniName, serviceClient);
-        
+
         pool.addService(request.getName(), newSevice);
 
         return serviceClient;
     }
-    
+
     @Override
     public List<ServiceResponse> findAllService(String token) throws TokenWrongException {
         ClientPool pool = ClientPool.getInstance();
-        
+
         /*
          * 客户端校验
          */
         boolean auth = pool.containsCustomerOrGatewayByToken(token);
-        if(!auth){
+        if (!auth) {
             throw new TokenWrongException();
         }
-        
+
         List<ServiceResponse> responses = new ArrayList<>();
         Map<String, Map<String, ServiceClient>> allService = pool.getAllService();
-        for(String serviceName : allService.keySet()){
+        for (String serviceName : allService.keySet()) {
             ServiceResponse response = new ServiceResponse();
             Map<String, ServiceClient> service = allService.get(serviceName);
             response.setName(serviceName);
             response.setServiceType(ServiceType.all);
             List<ServiceClientResponse> serviceClients = new ArrayList<>();
-            for(ServiceClient client : service.values()){
+            for (ServiceClient client : service.values()) {
                 ServiceClientResponse serviceClient = new ServiceClientResponse();
                 serviceClient.setUniName(client.getUniName());
                 serviceClient.setUrl(client.getUrl());
@@ -474,13 +492,13 @@ public class ClientServiceImpl implements ClientService {
             responses.add(response);
         }
         Map<String, Map<String, LimitedServiceClient>> allLimitedService = pool.getAllLimitedService();
-        for(String serviceName : allLimitedService.keySet()){
+        for (String serviceName : allLimitedService.keySet()) {
             ServiceResponse response = new ServiceResponse();
             Map<String, LimitedServiceClient> service = allLimitedService.get(serviceName);
             response.setName(serviceName);
             response.setServiceType(ServiceType.limited);
             List<LimitedServiceClientResponse> serviceClients = new ArrayList<>();
-            for(LimitedServiceClient client : service.values()){
+            for (LimitedServiceClient client : service.values()) {
                 LimitedServiceClientResponse serviceClient = new LimitedServiceClientResponse();
                 serviceClient.setUniName(client.getUniName());
                 serviceClient.setUrl(client.getUrl());
@@ -490,46 +508,46 @@ public class ClientServiceImpl implements ClientService {
             response.setLimitedServiceClients(serviceClients);
             responses.add(response);
         }
-        
+
         return responses;
     }
 
     @Override
     public ServiceResponse findService(FindServiceRequest findServiceRequest) throws TokenWrongException, NotExistException {
         ClientPool pool = ClientPool.getInstance();
-        
+
         /*
          * 客户端校验
          */
         boolean auth = pool.containsCustomerOrGatewayByToken(findServiceRequest.getToken());
-        if(!auth){
+        if (!auth) {
             throw new TokenWrongException();
         }
-        
+
         /*
         * 服务端列表
-        */
+         */
         String name = findServiceRequest.getName();
         ServiceResponse response = new ServiceResponse();
         Map<String, ServiceClient> service = pool.getService(name);
-        if(service != null){
+        if (service != null) {
             response.setName(name);
             response.setServiceType(ServiceType.all);
             List<ServiceClientResponse> serviceClients = new ArrayList<>();
-            for(ServiceClient client : service.values()){
+            for (ServiceClient client : service.values()) {
                 ServiceClientResponse serviceClient = new ServiceClientResponse();
                 serviceClient.setUniName(client.getUniName());
                 serviceClient.setUrl(client.getUrl());
                 serviceClients.add(serviceClient);
             }
             response.setServiceClients(serviceClients);
-        }else{
+        } else {
             Map<String, LimitedServiceClient> limitService = pool.getLimitService(name);
-            if(limitService != null){
+            if (limitService != null) {
                 response.setName(name);
                 response.setServiceType(ServiceType.limited);
                 List<LimitedServiceClientResponse> serviceClients = new ArrayList<>();
-                for(LimitedServiceClient client : limitService.values()){
+                for (LimitedServiceClient client : limitService.values()) {
                     LimitedServiceClientResponse serviceClient = new LimitedServiceClientResponse();
                     serviceClient.setUniName(client.getUniName());
                     serviceClient.setUrl(client.getUrl());
@@ -537,11 +555,11 @@ public class ClientServiceImpl implements ClientService {
                     serviceClients.add(serviceClient);
                 }
                 response.setLimitedServiceClients(serviceClients);
-            }else{
+            } else {
                 throw new NotExistException("服务提供方");
             }
         }
-        
+
         return response;
     }
 
@@ -550,7 +568,7 @@ public class ClientServiceImpl implements ClientService {
         ClientPool pool = ClientPool.getInstance();
         Map<String, CustomerClient> allCustomer = pool.getAllCustomer();
         List<CustomerResponse> responses = new ArrayList<>();
-        for(CustomerClient client : allCustomer.values()){
+        for (CustomerClient client : allCustomer.values()) {
             CustomerResponse response = new CustomerResponse();
             response.setName(client.getName());
             response.setUniName(client.getUniName());
@@ -558,25 +576,25 @@ public class ClientServiceImpl implements ClientService {
             response.setFailNum(client.getFailNum());
             responses.add(response);
         }
-        
+
         return responses;
     }
 
     @Override
     public boolean removeClient(Client client) {
         ClientPool pool = ClientPool.getInstance();
-        if(client instanceof LimitedServiceClient){
+        if (client instanceof LimitedServiceClient) {
             pool.removeLimitedServiceClient(client.getName(), client.getUniName());
-        }else if(client instanceof ServiceClient){
+        } else if (client instanceof ServiceClient) {
             pool.removeServiceClient(client.getName(), client.getUniName());
-        }else if(client instanceof GatewayClient){
+        } else if (client instanceof GatewayClient) {
             pool.removeGatewayClient(client.getName());
-        }else if(client instanceof CustomerClient){
+        } else if (client instanceof CustomerClient) {
             pool.removeCustomerClient(client.getName());
         }
-            
+
         return true;
-        
+
     }
 
     @Override
@@ -589,29 +607,40 @@ public class ClientServiceImpl implements ClientService {
         //获取客户端
         ClientPool pool = ClientPool.getInstance();
         Set<Client> Clients = pool.getAllClients();
-        for(Client client : Clients){
+        for (Client client : Clients) {
             //时间校验
-            if(client.getTms() == null || date - client.getTms() > hearbeatTime ){
-                
+            if (client.getTms() == null || date - client.getTms() > hearbeatTime) {
+                System.out.println("连接" + client.getUniName());
                 Map<String, Object> params = new HashMap<>();
-                try{
-                    String result = HttpUtil.doPost(client.getUrl() + "/zyras/hearbeat", params);
-                    client.setFailNum(0);
-                    client.setTms(date);
-                }catch(Exception e){
-                    if(client.getFailNum() >= hearbeatLeaveTimes  - 1){
+                params.put("ras", RasUtils.getGroupName());
+                String result = HttpUtil.doPost(client.getUrl() + "/zyras/heartbeat", params);
+                if (result != null) {
+                    HeartbeatResponse response = JSON.parseObject(result, HeartbeatResponse.class);
+                    if (response.isSuccess()) {
+                        client.setFailNum(0);
+                        client.setTms(date);
+                    } else {
+                        if (client.getFailNum() >= hearbeatLeaveTimes - 1) {
+                            //心跳连接连续失败次数超过设置值，移除
+                            this.removeClient(client);
+                        } else {
+                            client.setFailNum(client.getFailNum() + 1);
+                            client.setTms(date);
+                        }
+                    }
+                } else {
+                    if (client.getFailNum() >= hearbeatLeaveTimes - 1) {
                         //心跳连接连续失败次数超过设置值，移除
                         this.removeClient(client);
-                    }else{
+                    } else {
                         client.setFailNum(client.getFailNum() + 1);
                         client.setTms(date);
                     }
                 }
-                
+
             }
         }
         LoggerTools.log4j_write.info("心跳连接检测完成");
     }
-
 
 }

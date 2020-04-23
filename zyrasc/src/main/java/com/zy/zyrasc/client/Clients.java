@@ -22,6 +22,11 @@ public class Clients {
     private static ClientType type;
     
     /*
+     * 客户端类型
+     */
+    private static String rpcInterfaceBase;
+    
+    /*
     * 客户端注册信息表（Key为 注册中心集群名）
     */
     private static Map<String, ClientStatus> clientStatusMap = new HashMap<>();
@@ -45,6 +50,14 @@ public class Clients {
 
     public static void setType(ClientType type) {
         Clients.type = type;
+    }
+
+    public static String getRpcInterfaceBase() {
+        return rpcInterfaceBase;
+    }
+
+    public static void setRpcInterfaceBase(String rpcInterfaceBase) {
+        Clients.rpcInterfaceBase = rpcInterfaceBase;
     }
 
     public static Map<String, ClientStatus> getClientStatusMap() {

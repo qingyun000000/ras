@@ -22,7 +22,7 @@ public class GroupScheduler {
     @Autowired
     private GroupService rasService; 
     
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     private void groupSyn(){
         rasService.groupSyn();
     }

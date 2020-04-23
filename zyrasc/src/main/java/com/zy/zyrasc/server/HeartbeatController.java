@@ -15,6 +15,7 @@ public class HeartbeatController {
     
     @PostMapping("/zyras/heartbeat")
     public HeartbeatResponse heartbeat(String ras){
+        System.out.println("ras=" + ras);
         HeartbeatResponse response = new HeartbeatResponse();
         response.setSuccess(true);
         response.setToken(Clients.getClientStatusMap().get(ras).getToken());

@@ -19,7 +19,7 @@ public class ServerWorkScheduler {
      * 发现服务
      * 用于从注册中心获取新的服务客户端，当新客户端加入后，需要等待该定时来获取（新服务除外，熔断器不拦截，会在第一次调用时获取）。
      */
-    @Scheduled(cron = "0 20 * * * ?")
+    @Scheduled(cron = "0/20 * * * * ?")
     private void findService(){
         FindServiceService.getAllService();
     }
@@ -27,7 +27,7 @@ public class ServerWorkScheduler {
     /**
      * 更新requestToken
      */
-    @Scheduled(cron = "0 10 * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     private void updateRequestToken(){
         Map<String, ClientStatus> clientStatusMap = Clients.getClientStatusMap();
         for(String ras : clientStatusMap.keySet()){

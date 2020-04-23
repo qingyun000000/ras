@@ -215,7 +215,8 @@ public class ClientPool {
             LoggerTools.log4j_write.info("用户身份校验通过");
             return true;
         }
-        LoggerTools.log4j_write.info("服务方身份校验通过");
+        LoggerTools.log4j_write.info("服务方身份校验");
+        System.out.println(token);
         for (Map<String, ServiceClient> service : serviceClients.values()) {
             for (ServiceClient client : service.values()) {
                 if (client.getToken().equals(token)) {

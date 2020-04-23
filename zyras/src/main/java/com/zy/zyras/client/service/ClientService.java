@@ -71,6 +71,7 @@ public interface ClientService {
      * 所有服务发现
      * @param token
      * @return 
+     * @throws cn.whl.commonutils.exception.TokenWrongException 
      */
     public List<ServiceResponse> findAllService(String token) throws TokenWrongException;
 

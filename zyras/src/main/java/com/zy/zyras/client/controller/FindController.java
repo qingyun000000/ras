@@ -1,6 +1,7 @@
 package com.zy.zyras.client.controller;
 
 import cn.whl.commonutils.exception.InputWrongException;
+import cn.whl.commonutils.log.LoggerTools;
 import cn.whl.commonutils.service.result.ResultParam;
 import cn.whl.commonutils.service.result.ServiceResult;
 import cn.whl.commonutils.service.result.ServiceResultTool;
@@ -53,11 +54,13 @@ public class FindController {
      */
     @PostMapping("/allService")
     public ServiceResult findAllService(FindServiceRequest findServiceRequest){
+        LoggerTools.log4j_write.info("同步服务列表开始");
         ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
             if(VerificateTool.isEmpty(findServiceRequest.getToken())){
                 throw new NullPointerException("输入token");
             }
         }, ()->clientService.findAllService(findServiceRequest.getToken()));
+        LoggerTools.log4j_write.info("同步服务列表结束");
         return result;
     }
     

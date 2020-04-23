@@ -7,6 +7,11 @@ package com.zy.zyras.client.domain.vo;
 public class RegistRequest {
     
     /*
+    * 客户端port
+    */
+    private int port;
+    
+    /*
     * 客户端类型(service, customer, gateway)
     */
     private String clientType;
@@ -33,6 +38,14 @@ public class RegistRequest {
     
     //接口列表（LimitedServiceClient类型时）
     private String interList;
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     public String getClientType() {
         return clientType;

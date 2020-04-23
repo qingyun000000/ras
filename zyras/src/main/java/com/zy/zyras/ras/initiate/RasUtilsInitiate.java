@@ -97,7 +97,7 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
             RequestTokenUtils.setTokenBySingle();
         }
         
-        RasUtils.setHearbeatTime(hearbeatTime);
+        RasUtils.setHearbeatTime(hearbeatTime * 1000);
         RasUtils.setHearbeatLeaveTimes(hearbeatLeaveTimes);
         if("simple".equals(balanceMethod)){
             RasUtils.setBalanceMethod(BalanceMethod.simple);

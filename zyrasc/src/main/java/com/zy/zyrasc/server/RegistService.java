@@ -19,16 +19,17 @@ import java.util.Set;
  */
 public class RegistService {
 
-    public static void regist(ClientType type, List<ClientStatus> clientStatuses) throws Exception {
+    public static void regist(int port, ClientType type, List<ClientStatus> clientStatuses) throws Exception {
         for(ClientStatus status : clientStatuses){
-            regist(type, status.getName(), status.getUniName(), status.getServiceType(), status.getInterList(), status.getRasUrl());
+            regist(port, type, status.getName(), status.getUniName(), status.getServiceType(), status.getInterList(), status.getRasUrl());
         }
     }
     
-    public static void regist(ClientType type, String name, String uniName, ServiceType serviceType, Set<String> interList, String rasUrl) throws Exception {
+    public static void regist(int port, ClientType type, String name, String uniName, ServiceType serviceType, Set<String> interList, String rasUrl) throws Exception {
         String result = null;
 
         Map<String, String> params = new HashMap<>();
+        params.put("port", port+"");
         params.put("clientType", type.name());
         params.put("name", name);
         if (uniName != null && !"".equals(uniName.trim())) {
@@ -81,7 +82,7 @@ public class RegistService {
 
         if(result1.isSuccess()){
             System.out.println("注册成功！");
-            RegistResponse registResponse = (RegistResponse)result1.getData();
+            RegistResponse registResponse = JSON.parseObject(result1.getData().toString(), RegistResponse.class);
             ClientStatus status = new ClientStatus();
             status.setRasUrl(rasUrl);
             status.setToken(registResponse.getToken());

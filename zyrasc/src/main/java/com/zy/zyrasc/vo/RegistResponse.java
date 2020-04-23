@@ -1,5 +1,6 @@
 package com.zy.zyrasc.vo;
 
+import com.zy.zyrasc.enums.ClientType;
 import com.zy.zyrasc.enums.ServiceType;
 
 /**
@@ -16,7 +17,12 @@ public class RegistResponse {
     /*
     * 客户端类型
     */
-    private ServiceType clientType;
+    private ClientType clientType;
+    
+    /*
+    * 客户端类型
+    */
+    private ServiceType serviceType;
     
     /*
      * 服务名（组名，一个组包含多个实例） 
@@ -46,12 +52,20 @@ public class RegistResponse {
         this.ras = ras;
     }
 
-    public ServiceType getClientType() {
+    public ClientType getClientType() {
         return clientType;
     }
 
-    public void setClientType(ServiceType clientType) {
+    public void setClientType(ClientType clientType) {
         this.clientType = clientType;
+    }
+
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
     }
 
     public String getName() {

@@ -23,9 +23,11 @@ public class GetRequestTokenService {
         params.put("token", token);
         String result = HttpUtil.doPost(rasUrl + "/authority/serviceRequest/token", params);
         ServiceResult response = JSON.parseObject(result, ServiceResult.class);
-        RequestTokenResponse requestTokenResponse = (RequestTokenResponse)(response.getData());
+        RequestTokenResponse requestTokenResponse = JSON.parseObject(response.getData().toString(), RequestTokenResponse.class);
         clientStatus.setRequestToken2(clientStatus.getRequestToken1());
-        clientStatus.setRequestToken1(requestTokenResponse.getRequestToken());
+        if(requestTokenResponse.getRequestToken() != null){
+            clientStatus.setRequestToken1(requestTokenResponse.getRequestToken());
+        }
         return requestTokenResponse.getRequestToken();
     }
     

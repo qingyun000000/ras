@@ -9,6 +9,7 @@ import com.zy.zyras.authority.domain.vo.RequestTokenRequest;
 import com.zy.zyras.authority.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,7 +41,7 @@ public class ServiceRequestAuthorityController {
      * @param request
      * @return 
      */
-    @GetMapping("/token")
+    @PostMapping("/token")
     public ServiceResult serviceRequestToken(RequestTokenRequest request){
         ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
             if(VerificateTool.isEmpty(request.getToken())){
