@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 心跳服务
  * @author wuhailong
- * @createTime 2020-03-30
- * @updateTime 2020-03-30
  */
 @RestController
 public class HeartbeatController {

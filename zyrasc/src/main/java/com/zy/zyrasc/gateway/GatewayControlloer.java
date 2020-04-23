@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 网关功能
- *
  * @author wuhailong
  */
 @RestController

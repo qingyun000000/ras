@@ -1,6 +1,5 @@
 package com.zy.zyrasc.filter;
 
-import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
 import com.zy.zyrasc.enums.ClientType;
 import com.zy.zyrasc.exception.RasWrongException;
@@ -8,10 +7,6 @@ import com.zy.zyrasc.exception.RequestTokenWrongException;
 import com.zy.zyrasc.exception.ServiceBeLimitedException;
 import com.zy.zyrasc.service.ServiceVerificationService;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.stereotype.Component;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

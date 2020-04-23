@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 
 /**
  * 降级服务
- *
  * @author wuhailong
  */
 public class SecondaryService {

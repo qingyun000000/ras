@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Filter
+ * Filter配置
  * @author wuhailong
  */
 @Configuration  //配置文件注解

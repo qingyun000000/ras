@@ -2,7 +2,6 @@ package com.zy.zyrasc.server;
 
 import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
-import java.util.Date;
 import java.util.Map;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,8 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * 定时器：连接注册中心
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 @Configuration
 @EnableScheduling

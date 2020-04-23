@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Token异常处理
  * @author wuhailong
- * @createTime 2019-8-7
- * @updateTime 2019-8-7
  */
 @RestController
 public class LimitedServiceErrorController {

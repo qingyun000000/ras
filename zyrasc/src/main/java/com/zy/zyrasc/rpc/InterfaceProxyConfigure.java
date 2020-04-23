@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.zy.zyrasc.rpc;
 
 import org.springframework.beans.BeansException;
@@ -26,7 +21,7 @@ public class InterfaceProxyConfigure implements BeanDefinitionRegistryPostProces
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         System.out.println("基础包：" + basePackge);
         InterfaceScanner scanner = new InterfaceScanner(registry);
-        scanner.scan("com.zy.zyrasclient.remote");
+        scanner.scan("*");
     }
 
     @Override

@@ -6,7 +6,4 @@ package com.zy.zyrasc.vo;
  */
 public class ServiceClient extends Client{
     
-    
-    
-    
 }

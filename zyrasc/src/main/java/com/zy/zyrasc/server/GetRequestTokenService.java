@@ -3,23 +3,15 @@ package com.zy.zyrasc.server;
 import com.alibaba.fastjson.JSON;
 import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
-import com.zy.zyrasc.enums.ClientType;
-import com.zy.zyrasc.enums.ServiceType;
 import com.zy.zyrasc.utils.HttpUtil;
-import com.zy.zyrasc.vo.RegistResponse;
 import com.zy.zyrasc.vo.RequestTokenResponse;
-import com.zy.zyrasc.vo.ServiceResponse;
 import com.zy.zyrasc.vo.ServiceResult;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 获取requestToken
  * @author wuhailong
- * @createTime 2020-03-27
- * @updateTime 2020-03-27
  */
 public class GetRequestTokenService {
 
