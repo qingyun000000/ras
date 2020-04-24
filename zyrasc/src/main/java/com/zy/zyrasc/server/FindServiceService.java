@@ -3,6 +3,7 @@ package com.zy.zyrasc.server;
 import com.alibaba.fastjson.JSON;
 import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
+import com.zy.zyrasc.client.ServicePool;
 import com.zy.zyrasc.utils.HttpUtil;
 import com.zy.zyrasc.vo.LimitedServiceClient;
 import com.zy.zyrasc.vo.ServiceClient;
@@ -44,6 +45,7 @@ public class FindServiceService {
             return clients;
         } else {
             Clients.getServicePoolMap().get(ras).addService(response.getName(), response.getServiceClients());
+            
             return response.getServiceClients();
         }
     }
@@ -52,16 +54,20 @@ public class FindServiceService {
      * 获取所有服务
      */
     public static void getAllService() {
+        System.out.println("发现所有服务开始");
         Map<String, ClientStatus> clientStatusMap = Clients.getClientStatusMap();
         for (String ras : clientStatusMap.keySet()) {
             ClientStatus clientStatus = clientStatusMap.get(ras);
+            Clients.getServicePoolMap().put(ras, new ServicePool());
+            System.out.println("发现" + ras + "服务");
             String rasUrl = clientStatus.getRasUrl();
             String token = clientStatus.getToken();
             Map<String, String> params = new HashMap<>();
             params.put("token", token);
             String result = HttpUtil.doPost(rasUrl + "/client/find/allService", params);
             System.out.println(result);
-            List<ServiceResponse> responses = (List<ServiceResponse>) (JSON.parseObject(result, ServiceResult.class).getData());
+            ServiceResult result1 = JSON.parseObject(result, ServiceResult.class);
+            List<ServiceResponse> responses = JSON.parseArray(result1.getData().toString(), ServiceResponse.class);
             for (ServiceResponse response : responses) {
                 if ("limited".equals(response.getServiceType())) {
                     Clients.getServicePoolMap().get(ras).addLimitedService(response.getName(), response.getLimitedServiceClients());
@@ -70,8 +76,9 @@ public class FindServiceService {
                 }
             }
         }
-
+        System.out.println("发现所有服务结束");
     }
+
 }
 
 //    /**

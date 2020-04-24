@@ -2,6 +2,7 @@ package com.zy.zyrasc.server;
 
 import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
+import com.zy.zyrasc.enums.ClientType;
 import java.util.Map;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -21,7 +22,9 @@ public class ServerWorkScheduler {
      */
     @Scheduled(cron = "0/20 * * * * ?")
     private void findService(){
-        FindServiceService.getAllService();
+        if(Clients.getType() != ClientType.service){
+            FindServiceService.getAllService();
+        }
     }
     
     /**

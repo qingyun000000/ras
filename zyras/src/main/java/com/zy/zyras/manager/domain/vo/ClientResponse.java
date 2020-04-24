@@ -1,14 +1,14 @@
-package com.zy.zyras.client.domain.vo;
+package com.zy.zyras.manager.domain.vo;
 
 /**
  * 返回报文：调用方
  * @author wuhailong
  */
-public class CustomerResponse {
+public class ClientResponse {
     
     /*
-     * 服务名（组名，一个组包含多个实例） 
-     */
+    * 唯一名（实例名，单一客户端）
+    */
     private String name;
     
     /*

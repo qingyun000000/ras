@@ -1,10 +1,11 @@
 package com.zy.zyras.manager.controller;
 
-import com.zy.zyras.client.domain.vo.CustomerResponse;
-import com.zy.zyras.client.service.ClientService;
+import com.zy.zyras.manager.service.ClientService;
 import com.zy.zyras.group.domain.Ras;
 import com.zy.zyras.group.service.GroupService;
+import com.zy.zyras.manager.domain.vo.ClientResponse;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,8 +39,15 @@ public class ManagerController {
      */
     @GetMapping("/manager")
     public String mangerMainPage(Model model){
-        List<CustomerResponse> customerClients = clientService.getCustomerClients();
+        List<ClientResponse> customerClients = clientService.getCustomerClients();
         model.addAttribute("customers", customerClients);
+        List<ClientResponse> gatewayClients = clientService.getGatewayClients();
+        model.addAttribute("gateways", gatewayClients);
+        List<ClientResponse> serviceClients = clientService.getServiceClients();
+        model.addAttribute("services", serviceClients);
+        List<ClientResponse> limitedServiceClients = clientService.getLimitedServiceClients();
+        model.addAttribute("limitedServices", limitedServiceClients);
+        
         
         List<Ras> rass = groupService.getAllRass();
         model.addAttribute("rass", rass);

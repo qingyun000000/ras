@@ -29,16 +29,27 @@ and open the template in the editor.
             <h3 style="color: blue;">客户端管理</h3>
             <h4>非限定服务提供方列表</h4>
             <p th:each="service : ${services}">
-                <span th:text="${service.name}"></span>
-                <span th:text="${service.uniName}"></span>
+                <span th:text="${service.name}" style="margin-right: 10%;"></span>
+                <span th:text="${service.uniName}" style="margin-right: 10%;"></span>
                 <span th:text="${service.url}"></span>
             </p>
             <h4>限定服务提供方列表</h4>
-            <p th:each="lservice : ${limitServices}"><span th:text="${lservice.url}"></span></p>
+            <p th:each="lservice : ${limitServices}">
+                <span th:text="${lservice.name}" style="margin-right: 10%;"></span>
+                <span th:text="${lservice.uniName}" style="margin-right: 10%;"></span>
+                <span th:text="${lservice.url}"></span></p>
             <h4>服务消费方列表</h4>
-            <p th:each="customer : ${customers}"><span th:text="${customer.url}"></span></p>
+            <p th:each="customer : ${customers}">
+                <span th:text="${customer.name}" style="margin-right: 10%;"></span>
+                <span th:text="${customer.uniName}" style="margin-right: 10%;"></span>
+                <span th:text="${customer.url}"></span>
+            </p>
             <h4>服务网关方列表</h4>
-            <p th:each="gateway : ${gateways}"><span th:text="${gateway.url}"></span></p>
+            <p th:each="gateway : ${gateways}">
+                <span th:text="${gateway.name}" style="margin-right: 10%;"></span>
+                <span th:text="${gateway.uniName}" style="margin-right: 10%;"></span>
+                <span th:text="${gateway.url}"></span>
+            </p>
             <hr style="color: #cccccc"/>
         </div>
         <div style="margin-left: 10%;width: 80%;">

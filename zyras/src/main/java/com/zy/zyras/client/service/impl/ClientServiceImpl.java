@@ -16,7 +16,6 @@ import com.zy.zyras.client.domain.LimitedServiceClient;
 import com.zy.zyras.client.domain.ServiceClient;
 import com.zy.zyras.client.domain.enums.ClientType;
 import com.zy.zyras.client.domain.enums.ServiceType;
-import com.zy.zyras.client.domain.vo.CustomerResponse;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.domain.vo.LimitedServiceClientResponse;
 import com.zy.zyras.client.domain.vo.HeartbeatResponse;
@@ -142,6 +141,7 @@ public class ClientServiceImpl implements ClientService {
         response.setUrl(serviceClient.getUrl());
         response.setRas(RasUtils.getGroupName());
         response.setToken(serviceClient.getToken());
+        
 
         return response;
     }
@@ -564,23 +564,6 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<CustomerResponse> getCustomerClients() {
-        ClientPool pool = ClientPool.getInstance();
-        Map<String, CustomerClient> allCustomer = pool.getAllCustomer();
-        List<CustomerResponse> responses = new ArrayList<>();
-        for (CustomerClient client : allCustomer.values()) {
-            CustomerResponse response = new CustomerResponse();
-            response.setName(client.getName());
-            response.setUniName(client.getUniName());
-            response.setUrl(client.getUrl());
-            response.setFailNum(client.getFailNum());
-            responses.add(response);
-        }
-
-        return responses;
-    }
-
-    @Override
     public boolean removeClient(Client client) {
         ClientPool pool = ClientPool.getInstance();
         if (client instanceof LimitedServiceClient) {
@@ -610,7 +593,7 @@ public class ClientServiceImpl implements ClientService {
         for (Client client : Clients) {
             //时间校验
             if (client.getTms() == null || date - client.getTms() > hearbeatTime) {
-                System.out.println("连接" + client.getUniName());
+                LoggerTools.log4j_write.info("连接" + client.getUniName());
                 Map<String, Object> params = new HashMap<>();
                 params.put("ras", RasUtils.getGroupName());
                 String result = HttpUtil.doPost(client.getUrl() + "/zyras/heartbeat", params);

@@ -51,17 +51,16 @@ public class ProxyFactoryBean<T> implements FactoryBean{
                     //调用服务（包括负载均衡），转request模块处理
                     Class<?> returnType = method.getReturnType();
                     try{
+                        System.out.println("调用远程服务开始");
                         response = ServiceRequestService.request(returnType, rs.ras(), rs.service(), annotation.value()[0], annotation.method()[0], params);
+                        System.out.println("调用远程服务结束");
                     }catch(Exception ex){
                         //服务失败，降级方法执行
                         response = new SecondaryService().secondaryService(method, o, os,interfaceClass);
                     }
                 }
-                
                 return response;
             }
-
-            
         });
     }
 

@@ -48,7 +48,6 @@ public class InterfaceScanner extends ClassPathBeanDefinitionScanner{
 
     private void createBeanDefinition(Set<BeanDefinitionHolder> beanDefinitionHolders) {
         for(BeanDefinitionHolder beanDefinitionHolder : beanDefinitionHolders){
-            System.out.println(beanDefinitionHolder.getBeanDefinition().getBeanClassName());
             GenericBeanDefinition beanDefinition = (GenericBeanDefinition) beanDefinitionHolder.getBeanDefinition();
             beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(beanDefinition.getBeanClassName());
             beanDefinition.setBeanClass(ProxyFactoryBean.class);

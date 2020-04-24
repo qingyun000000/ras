@@ -1,6 +1,7 @@
 package com.zy.zyrasc.server;
 
 import com.alibaba.fastjson.JSON;
+import com.zy.zyrasc.balance.SimpleLoadBalanceMethod;
 import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
 import com.zy.zyrasc.enums.ClientType;
@@ -86,6 +87,7 @@ public class RegistService {
             ClientStatus status = new ClientStatus();
             status.setRasUrl(rasUrl);
             status.setToken(registResponse.getToken());
+            status.setBalanceMethod(new SimpleLoadBalanceMethod());
             Clients.getClientStatusMap().put(registResponse.getRas(), status);
         }else{
             System.out.println("注册失败：" + result1.getMessage());

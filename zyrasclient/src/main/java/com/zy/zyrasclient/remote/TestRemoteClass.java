@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author wuhailong
  */
-@RemoteService(ras = "ras", service = "comm")
+@RemoteService(ras = "ras", service = "serv")
 public interface TestRemoteClass {
     
-    @RequestMapping(value = "/url", method = RequestMethod.GET)
+    @RequestMapping(value = "/test3", method = RequestMethod.GET)
     public Map<String, String> test();
 }

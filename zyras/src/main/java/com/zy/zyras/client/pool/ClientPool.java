@@ -248,6 +248,14 @@ public class ClientPool {
     }
     
     /**
+     * 获取所有gateway
+     * @return 
+     */
+    public Map<String, GatewayClient> getAllGateway() {
+        return gatewayClients;
+    }
+    
+    /**
      * 获取所有serviceClients
      * @return 
      */
@@ -321,5 +329,7 @@ public class ClientPool {
     public void removeCustomerClient(String name) {
         customerClients.remove(name);
     }
+
+    
 
 }

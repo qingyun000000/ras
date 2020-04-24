@@ -5,6 +5,7 @@ import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
 import com.zy.zyrasc.enums.ClientType;
 import com.zy.zyrasc.enums.ServiceType;
+import com.zy.zyrasc.server.FindServiceService;
 import com.zy.zyrasc.server.RegistService;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,11 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
 
             //注册
             RegistService.regist(port, Clients.getType(), clientStatuses);
+            
+            //发现服务
+            if(Clients.getType() != ClientType.service){
+                FindServiceService.getAllService();
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(InitialService.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,6 +96,9 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
                 throw new Exception("name不能为空");
             }else{
                 status.setName(name);
+            }
+            if(uniName != null && !"".equals(uniName)){
+                status.setUniName(uniName);
             }
             if (!"all".equals(serviceType) && !"limited".equals(serviceType)) {
                 System.out.println("错误配置：service值错误[只能为all(默认值）/limited]");
