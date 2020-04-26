@@ -18,14 +18,8 @@ public class GatewayControlloer {
 
     @RequestMapping("/gateway")
     public Object getewayRequest(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        System.out.println(requestURI);
-        if(requestURI.startsWith("/")){
-            requestURI = requestURI.substring(1);
-        }
-        String[] split = requestURI.split("/");
-        String serviceName = split[0];
-        String url = requestURI.substring(requestURI.indexOf("/"));
+        String serviceName = (String) request.getAttribute("zyRasServiceName");
+        String url = (String) request.getAttribute("zyRasUrl");
         RequestMethod requestMethod = RequestMethod.POST;
         if ("GET".equals(request.getMethod()) || "get".equals(request.getMethod())) {
             requestMethod = RequestMethod.GET;
@@ -45,7 +39,7 @@ public class GatewayControlloer {
                 return "方法已经熔断";
             } else {
                 try {
-                    response = ServiceRequestService.request(Object.class, service.getRas(), service.getService(), requestURI, requestMethod, params);
+                    response = ServiceRequestService.request(Object.class, service.getRas(), service.getService(), url, requestMethod, params);
                     return response;
                 } catch (Exception ex) {
                     return ex.getMessage();

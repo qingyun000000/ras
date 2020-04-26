@@ -32,6 +32,7 @@ public class ZyrasFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) srequest;
         HttpServletResponse rep = (HttpServletResponse) sresponse;
         System.out.println(request.getRequestURI());
+        String requestURI = request.getRequestURI();
         if("/zyras/heartbeat".equals(request.getRequestURI())){
             filterChain.doFilter(srequest, sresponse);
         }else if(Clients.getType() == ClientType.gateway){
@@ -45,8 +46,26 @@ public class ZyrasFilter implements Filter {
             rep.setHeader("Access-Control-Allow-Headers", "token, Origin, X-Requested-With, Content-Type, Accept");
             
             //转发
+            if(requestURI.startsWith("/")){
+                requestURI = requestURI.substring(1);
+            }
+            String[] split = requestURI.split("/");
+            String serviceName = split[0];
+            String url = requestURI.substring(requestURI.indexOf("/"));
+            request.setAttribute("zyRasServiceName", serviceName);
+            request.setAttribute("zyRasUrl", url);
             request.getRequestDispatcher("/gateway").forward(srequest, sresponse);
-        }else if (Clients.getType() == ClientType.serviceAndCustomer || Clients.getType() == ClientType.service) {
+        }else if (Clients.getType() == ClientType.service){
+            try {
+                if(ServiceVerificationService.verificateRequest(request)){
+                    filterChain.doFilter(srequest, sresponse);
+                }
+            } catch (RequestTokenWrongException | RasWrongException ex) {
+                request.getRequestDispatcher("/requestTokenError").forward(srequest, sresponse);
+            } catch (ServiceBeLimitedException ex) {
+                request.getRequestDispatcher("/limitedServiceError").forward(srequest, sresponse);
+            }
+        }else if(request.getAttribute("ras") != null && !"".equals(request.getAttribute("ras")) && Clients.getType() == ClientType.serviceAndCustomer){
             try {
                 if(ServiceVerificationService.verificateRequest(request)){
                     filterChain.doFilter(srequest, sresponse);

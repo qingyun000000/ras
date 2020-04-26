@@ -32,7 +32,7 @@ public class ServiceVerificationService {
         if (clientStatusMap.containsKey(ras)) {
             ClientStatus clientStatus = clientStatusMap.get(ras);
             String requestToken = (String) request.getAttribute("zyrasRequestToken");
-
+            System.out.println(requestToken);
             //请求方身份判断
             if (!requestToken.equals(clientStatus.getRequestToken1())
                     && !requestToken.equals(clientStatus.getRequestToken2())) {

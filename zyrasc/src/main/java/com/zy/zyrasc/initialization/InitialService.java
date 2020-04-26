@@ -5,6 +5,7 @@ import com.zy.zyrasc.client.ClientStatus;
 import com.zy.zyrasc.client.Clients;
 import com.zy.zyrasc.enums.ClientType;
 import com.zy.zyrasc.enums.ServiceType;
+import com.zy.zyrasc.gateway.ServiceNameService;
 import com.zy.zyrasc.server.FindServiceService;
 import com.zy.zyrasc.server.RegistService;
 import java.util.ArrayList;
@@ -47,14 +48,14 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
     @Value("${zyras.client.uniName:notNamed}")
     private String uniName;
 
-    @Value("${zyras.client.interList:emp}")
+    @Value("${zyras.client.interList:[]}")
     private String interList;
 
     @Value("${zyras.linkwords:[]}")
     private String linkwords;
     
-    @Value("${zyras.rpc.base:emp}")
-    private String base;
+    @Value("${zyras.gateway.map:[]}")
+    private String map;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent e) {
@@ -69,6 +70,11 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
             if(Clients.getType() != ClientType.service){
                 FindServiceService.getAllService();
             }
+            
+            //网关处理映射
+            if(Clients.getType() == ClientType.gateway){
+                ServiceNameService.setRealRasName(map);
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(InitialService.class.getName()).log(Level.SEVERE, null, ex);
@@ -79,7 +85,6 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
     private List<ClientStatus> verificate() throws Exception {
         System.out.println("校验配置信息开始……");
         Clients.setSingleton(singleton);
-        Clients.setRpcInterfaceBase(base);
         verificateType();
         List<ClientStatus> clientStatuses = new ArrayList<>();
         if (singleton) {

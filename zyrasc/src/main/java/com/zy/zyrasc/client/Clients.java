@@ -2,6 +2,7 @@ package com.zy.zyrasc.client;
 
 import com.zy.zyrasc.enums.ClientType;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -22,9 +23,9 @@ public class Clients {
     private static ClientType type;
     
     /*
-     * 客户端类型
+     * 网关功能路径映射
      */
-    private static String rpcInterfaceBase;
+    private static List<GatewayMap> gatewayMaps;
     
     /*
     * 客户端注册信息表（Key为 注册中心集群名）
@@ -52,12 +53,12 @@ public class Clients {
         Clients.type = type;
     }
 
-    public static String getRpcInterfaceBase() {
-        return rpcInterfaceBase;
+    public static List<GatewayMap> getGatewayMaps() {
+        return gatewayMaps;
     }
 
-    public static void setRpcInterfaceBase(String rpcInterfaceBase) {
-        Clients.rpcInterfaceBase = rpcInterfaceBase;
+    public static void setGatewayMaps(List<GatewayMap> gatewayMaps) {
+        Clients.gatewayMaps = gatewayMaps;
     }
 
     public static Map<String, ClientStatus> getClientStatusMap() {

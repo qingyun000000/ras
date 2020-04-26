@@ -40,7 +40,8 @@ public class ServiceRequestService {
             //补充ras, requestToken信息
             params.put("zyras", ras);
             params.put("zyrasRequestToken", Clients.getClientStatusMap().get(ras).getRequestToken1());
-            T response;
+            System.out.println(Clients.getClientStatusMap().get(ras).getRequestToken1());
+            T response = null;
             try {
                 System.out.println("访问：" + client.getUniName() + "服务" + url);
                 response = request(method, client, url, params, clazz);
@@ -48,19 +49,23 @@ public class ServiceRequestService {
                 if(client.getFused() == FuseState.半熔断){
                     FuseService.serviceSuccess(ras, serviceName, client);
                 }
-            } finally {
+            } catch(Exception ex) {
                 //修改熔断状态
                 FuseService.serviceFail(ras, serviceName, client);
-                //重新负载均衡一次，这次只取
-                ServiceClient client1 = LoadBalanceService.getServiceNormalClient(ras, serviceName, url);
-                try {
-                    response = request(method, client1, url, params, clazz);
-                } finally {
-                    //修改熔断状态
-                    FuseService.serviceFail(ras, serviceName, client1);
-                }
                 
+                //重新负载均衡一次，这次只取正常客户端
+                client = LoadBalanceService.getServiceNormalClient(ras, serviceName, url);
+                if (client != null) {
+                    try {
+                        response = request(method, client, url, params, clazz);
+                    } catch(Exception ex2) {
+                        //修改熔断状态
+                        FuseService.serviceFail(ras, serviceName, client);
+                    }
+                }
             }
+            
+            
             return response;
         } else {
             throw new ServiceNotExistException(ras + "_" + serviceName + "不存在");

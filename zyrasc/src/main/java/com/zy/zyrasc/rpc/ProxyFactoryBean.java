@@ -55,6 +55,7 @@ public class ProxyFactoryBean<T> implements FactoryBean{
                         response = ServiceRequestService.request(returnType, rs.ras(), rs.service(), annotation.value()[0], annotation.method()[0], params);
                         System.out.println("调用远程服务结束");
                     }catch(Exception ex){
+                        ex.printStackTrace();
                         //服务失败，降级方法执行
                         response = new SecondaryService().secondaryService(method, o, os,interfaceClass);
                     }
