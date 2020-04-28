@@ -62,6 +62,11 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
         try {
             //校验
             List<ClientStatus> clientStatuses = verificate();
+            
+            //网关处理映射
+            if(Clients.getType() == ClientType.gateway){
+                ServiceNameService.setRealRasName(map);
+            }
 
             //注册
             RegistService.regist(port, Clients.getType(), clientStatuses);
@@ -71,11 +76,6 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
                 FindServiceService.getAllService();
             }
             
-            //网关处理映射
-            if(Clients.getType() == ClientType.gateway){
-                ServiceNameService.setRealRasName(map);
-            }
-
         } catch (Exception ex) {
             Logger.getLogger(InitialService.class.getName()).log(Level.SEVERE, null, ex);
         }

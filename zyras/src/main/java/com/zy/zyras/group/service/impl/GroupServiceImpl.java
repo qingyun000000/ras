@@ -2,6 +2,11 @@ package com.zy.zyras.group.service.impl;
 
 import cn.whl.commonutils.log.LoggerTools;
 import com.alibaba.fastjson.JSON;
+import com.zy.zyras.client.domain.CustomerClient;
+import com.zy.zyras.client.domain.GatewayClient;
+import com.zy.zyras.client.domain.LimitedServiceClient;
+import com.zy.zyras.client.domain.ServiceClient;
+import com.zy.zyras.client.pool.ClientPool;
 import com.zy.zyras.group.domain.Ras;
 import com.zy.zyras.group.domain.vo.RegistRequest;
 import com.zy.zyras.group.domain.vo.RegistResponse;
@@ -31,7 +36,7 @@ public class GroupServiceImpl implements GroupService{
         LoggerTools.log4j_write.info("开始集群注册");
         for(String url : registUrls){
             Map<String, Object> params = new HashMap<>();
-            params.put("name", RasUtils.getRasName());
+            params.put("name", RasUtils.getName());
             params.put("port", RasUtils.getPort());
             String result = HttpUtil.doPost(url + "/group/regist", params);
             try{
@@ -54,12 +59,14 @@ public class GroupServiceImpl implements GroupService{
         Ras ras = new Ras();
         ras.setName(registRequest.getName());
         ras.setUrl(registRequest.getUrl());
+        System.out.println("接受" + JSON.toJSON(ras));
         pool.addRas(ras);
         
         RegistResponse response = new RegistResponse();
         response.setSuccess(true);
-        response.setRasName(RasUtils.getRasName());
+        response.setRasName(RasUtils.getName());
         LoggerTools.log4j_write.info("注册完成：" +  ras.getName());
+
         return response;
     }
 
@@ -78,9 +85,13 @@ public class GroupServiceImpl implements GroupService{
                 LoggerTools.log4j_write.info("向" + ras.getName() + "同步");
                 if(ras.getTms() == null || date - ras.getTms() > groupSynTime){
                     Map<String, Object> params = new HashMap<>();
+                    params.put("rasPoolJson", JSON.toJSON(RasPool.getInstance()));
+                    params.put("clientPoolJson", JSON.toJSON(ClientPool.getInstance()));
+                    System.out.println("同步至" + ras.getUrl());
                     String result = HttpUtil.doPost(ras.getUrl() + "/group/syn", params);
                 }
                 LoggerTools.log4j_write.info("向" + ras.getName() + "同步完成");
+                ras.setTms(date);
             }
         }
         
@@ -91,18 +102,53 @@ public class GroupServiceImpl implements GroupService{
     public SynResponse syn(SynRequest synRequest) {
         LoggerTools.log4j_write.info("处理集群同步信息开始");
         
-        //同步全部为增加，删除客户端均由心跳连接处理
-        
         //同步注册中心列表
+        RasPool rasPoolLocal = RasPool.getInstance();
+        System.out.println(synRequest.getRasPoolJson());
+        com.zy.zyras.group.domain.vo.RasPool pool = JSON.parseObject(synRequest.getRasPoolJson(), com.zy.zyras.group.domain.vo.RasPool.class);
+        Map<String, Ras> newRass = pool.getAllRass();
+        rasPoolLocal.synRass(newRass);
         
-        //同步客户端列表
+        //同步客户端列表,同步全部为增加，删除客户端均由心跳连接处理
+        ClientPool clientPoolLocal = ClientPool.getInstance();
+        System.out.println("客户端：" + synRequest.getClientPoolJson());
+        com.zy.zyras.group.domain.vo.ClientPool pool2 = JSON.parseObject(synRequest.getClientPoolJson(), com.zy.zyras.group.domain.vo.ClientPool.class);
         //1.限制服务提供方
-        
+        Map<String, Map<String, LimitedServiceClient>> allLimitedServices = pool2.getAllLimitedServices();
+        for(String str : allLimitedServices.keySet()){
+            if(clientPoolLocal.serviceContainsName(str) != 2){
+                clientPoolLocal.addLimitService(str, allLimitedServices.get(str));
+            }else{
+                clientPoolLocal.synLimitService(str,  allLimitedServices.get(str));
+            }
+        }
         //2.非限制服务提供方
-        
+        Map<String, Map<String, ServiceClient>> allServices = pool2.getAllServices();
+        for(String str : allServices.keySet()){
+            if(clientPoolLocal.serviceContainsName(str) != 1){
+                clientPoolLocal.addService(str, allServices.get(str));
+            }else{
+                clientPoolLocal.synService(str,  allServices.get(str));
+            }
+        }
         //3.服务调用方
-        
+        Map<String, CustomerClient> allCustomers = pool2.getAllCustomers();
+        for(String str : allCustomers.keySet()){
+            if(!clientPoolLocal.customerContainsName(str)){
+                clientPoolLocal.addCustomer(allCustomers.get(str));
+            }else{
+                System.out.println("已存在，不同步");
+            }
+        }
         //4.网关
+        Map<String, GatewayClient> allGateways = pool2.getAllGateways();
+        for(String str : allGateways.keySet()){
+            if(!clientPoolLocal.gatewayContainsName(str)){
+                clientPoolLocal.addGateway(allGateways.get(str));
+            }else{
+                System.out.println("已存在，不同步");
+            }
+        }
         
         SynResponse response = new SynResponse();
         

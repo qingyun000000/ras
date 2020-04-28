@@ -19,5 +19,4 @@ public class LimitedServiceClient extends ServiceClient{
         this.interList = interList;
     }
     
-    
 }

@@ -49,20 +49,31 @@ public class ZyrasFilter implements Filter {
             if(requestURI.startsWith("/")){
                 requestURI = requestURI.substring(1);
             }
-            String[] split = requestURI.split("/");
-            String serviceName = split[0];
-            String url = requestURI.substring(requestURI.indexOf("/"));
-            request.setAttribute("zyRasServiceName", serviceName);
-            request.setAttribute("zyRasUrl", url);
-            request.getRequestDispatcher("/gateway").forward(srequest, sresponse);
+            try{
+                String[] split = requestURI.split("/");
+                String serviceName = split[0];
+                String url = requestURI.substring(requestURI.indexOf("/"));
+                request.setAttribute("zyRasServiceName", serviceName);
+                request.setAttribute("zyRasUrl", url);
+                request.getRequestDispatcher("/gateway").forward(srequest, sresponse);
+            }catch(Exception ex){
+                request.getRequestDispatcher("/serviceNotExist").forward(srequest, sresponse);
+            }
+            
         }else if (Clients.getType() == ClientType.service){
             try {
+                String requestToken = (String) request.getParameter("zyrasRequestToken");
+                System.out.println("requestToken=" + requestToken);
+                String ras = (String) request.getParameter("zyras");
+                System.out.println("ras=" + ras);
                 if(ServiceVerificationService.verificateRequest(request)){
                     filterChain.doFilter(srequest, sresponse);
                 }
             } catch (RequestTokenWrongException | RasWrongException ex) {
+                ex.printStackTrace();
                 request.getRequestDispatcher("/requestTokenError").forward(srequest, sresponse);
             } catch (ServiceBeLimitedException ex) {
+                ex.printStackTrace();
                 request.getRequestDispatcher("/limitedServiceError").forward(srequest, sresponse);
             }
         }else if(request.getAttribute("ras") != null && !"".equals(request.getAttribute("ras")) && Clients.getType() == ClientType.serviceAndCustomer){

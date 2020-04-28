@@ -27,12 +27,13 @@ public class ServiceVerificationService {
      * @throws com.zy.zyrasc.exception.RasWrongException
      */
     public static boolean verificateRequest(HttpServletRequest request) throws RequestTokenWrongException, ServiceBeLimitedException, RasWrongException {
-        String ras = (String) request.getAttribute("zyras");
+        String ras = (String) request.getParameter("zyras");
         Map<String, ClientStatus> clientStatusMap = Clients.getClientStatusMap();
         if (clientStatusMap.containsKey(ras)) {
             ClientStatus clientStatus = clientStatusMap.get(ras);
-            String requestToken = (String) request.getAttribute("zyrasRequestToken");
-            System.out.println(requestToken);
+            String requestToken = (String) request.getParameter("zyrasRequestToken");
+            System.out.println("requestToken=" + requestToken);
+            System.out.println(clientStatus.getRequestToken1());
             //请求方身份判断
             if (!requestToken.equals(clientStatus.getRequestToken1())
                     && !requestToken.equals(clientStatus.getRequestToken2())) {

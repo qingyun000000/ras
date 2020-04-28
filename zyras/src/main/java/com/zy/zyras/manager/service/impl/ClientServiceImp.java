@@ -23,7 +23,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientResponse> getCustomerClients() {
         ClientPool pool = ClientPool.getInstance();
-        Map<String, CustomerClient> allCustomer = pool.getAllCustomer();
+        Map<String, CustomerClient> allCustomer = pool.getAllCustomers();
         List<ClientResponse> responses = new ArrayList<>();
         for (CustomerClient client : allCustomer.values()) {
             ClientResponse response = new ClientResponse();
@@ -40,7 +40,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientResponse> getGatewayClients() {
         ClientPool pool = ClientPool.getInstance();
-        Map<String, GatewayClient> allCateway = pool.getAllGateway();
+        Map<String, GatewayClient> allCateway = pool.getAllGateways();
         List<ClientResponse> responses = new ArrayList<>();
         for (GatewayClient client : allCateway.values()) {
             ClientResponse response = new ClientResponse();
@@ -57,7 +57,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientResponse> getServiceClients() {
         ClientPool pool = ClientPool.getInstance();
-        Map<String, Map<String, ServiceClient>> allService = pool.getAllService();
+        Map<String, Map<String, ServiceClient>> allService = pool.getAllServices();
         List<ClientResponse> responses = new ArrayList<>();
         for (Map<String, ServiceClient> map : allService.values()) {
             for(ServiceClient client : map.values()){
@@ -76,7 +76,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientResponse> getLimitedServiceClients() {
         ClientPool pool = ClientPool.getInstance();
-        Map<String, Map<String, LimitedServiceClient>> allService = pool.getAllLimitedService();
+        Map<String, Map<String, LimitedServiceClient>> allService = pool.getAllLimitedServices();
         List<ClientResponse> responses = new ArrayList<>();
         for (Map<String, LimitedServiceClient> map : allService.values()) {
             for(ServiceClient client : map.values()){

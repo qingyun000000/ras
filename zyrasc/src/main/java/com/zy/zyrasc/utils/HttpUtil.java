@@ -173,6 +173,7 @@ public class HttpUtil {
         httpPost.setHeader("Content-Type", "application/json");
         String charSet = "UTF-8";
         StringEntity entity = new StringEntity(params, charSet);
+        System.out.println(entity.toString());
         httpPost.setEntity(entity);
         CloseableHttpResponse response = null;
         try {

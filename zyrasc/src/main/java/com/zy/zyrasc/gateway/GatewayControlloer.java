@@ -1,10 +1,12 @@
 package com.zy.zyrasc.gateway;
 
+import com.alibaba.fastjson.JSON;
 import com.zy.zyrasc.fuse.FuseService;
 import com.zy.zyrasc.request.ServiceRequestService;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.http.HttpEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,8 @@ public class GatewayControlloer {
     public Object getewayRequest(HttpServletRequest request) {
         String serviceName = (String) request.getAttribute("zyRasServiceName");
         String url = (String) request.getAttribute("zyRasUrl");
+        System.out.println(serviceName);
+        System.out.println(url);
         RequestMethod requestMethod = RequestMethod.POST;
         if ("GET".equals(request.getMethod()) || "get".equals(request.getMethod())) {
             requestMethod = RequestMethod.GET;
@@ -29,7 +33,11 @@ public class GatewayControlloer {
             //获取ras和真实服务
             RealService service = ServiceNameService.getRealRasName(serviceName);
             Map<String, Object> params = new HashMap<>();
-
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            for(String str : parameterMap.keySet()){
+                params.put(str, request.getParameter(str));
+            }
+            System.out.println(JSON.toJSON(parameterMap));
             Object response;
 
             //熔断判断

@@ -87,7 +87,7 @@ public class RegistService {
             ClientStatus status = new ClientStatus();
             status.setRasUrl(rasUrl);
             status.setToken(registResponse.getToken());
-            status.setBalanceMethod(new SimpleLoadBalanceMethod());
+            status.setBalanceMethod(new SimpleLoadBalanceMethod());             //负载均衡策略
             Clients.getClientStatusMap().put(registResponse.getRas(), status);
         }else{
             System.out.println("注册失败：" + result1.getMessage());

@@ -5,7 +5,6 @@ import cn.whl.commonutils.exception.InputWrongException;
 import cn.whl.commonutils.exception.NotExistException;
 import cn.whl.commonutils.exception.ServiceRunException;
 import cn.whl.commonutils.exception.TokenWrongException;
-import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.domain.vo.RegistResponse;
@@ -83,13 +82,6 @@ public interface ClientService {
      * @throws cn.whl.commonutils.exception.ServiceRunException 
      */
     public ServiceResponse findService(FindServiceRequest findServiceRequest) throws TokenWrongException, NotExistException, ServiceRunException;
-
-    /**
-     * 移除客户端
-     * @param client
-     * @return 
-     */
-    public boolean removeClient(Client client);
 
     /**
      * 心跳

@@ -1,5 +1,6 @@
 package com.zy.zyrasc.vo;
 
+import com.zy.zyrasc.balance.BalanceMethod;
 import com.zy.zyrasc.enums.ClientType;
 import com.zy.zyrasc.enums.ServiceType;
 
@@ -43,6 +44,11 @@ public class RegistResponse {
     * token 身份识别标识
     */
     private String token;
+    
+    /*
+    * 负载均衡策略
+    */
+    private BalanceMethod balanceMethod;
 
     public String getRas() {
         return ras;
@@ -98,6 +104,14 @@ public class RegistResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public BalanceMethod getBalanceMethod() {
+        return balanceMethod;
+    }
+
+    public void setBalanceMethod(BalanceMethod balanceMethod) {
+        this.balanceMethod = balanceMethod;
     }
     
 }

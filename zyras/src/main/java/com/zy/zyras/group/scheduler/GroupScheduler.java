@@ -1,10 +1,14 @@
 package com.zy.zyras.group.scheduler;
 
+import com.alibaba.fastjson.JSON;
+import com.zy.zyras.group.pool.RasPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import com.zy.zyras.group.service.GroupService;
+import com.zy.zyras.ras.enums.WorkState;
+import com.zy.zyras.ras.utils.RasUtils;
 
 /**
  * 定时器：集群工作
@@ -22,9 +26,12 @@ public class GroupScheduler {
     @Autowired
     private GroupService rasService; 
     
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     private void groupSyn(){
-        rasService.groupSyn();
+        if(RasUtils.getWorkState() == WorkState.group){
+            rasService.groupSyn();
+        }
     }
+    
     
 }

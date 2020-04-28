@@ -26,11 +26,14 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
     @Value("${server.port:8080}")
     private int port;
     
+    @Value("${zyras.ras.name:emp}")
+    private String name;
+    
     @Value("${zyras.ras.state:single}")
     private String workState;
     
-    @Value("${zyras.ras.name:emp}")
-    private String name;
+    @Value("${zyras.ras.ras:emp}")
+    private String groupName1;
     
     @Value("${zyras.ras.group.name:emp}")
     private String groupName;
@@ -72,7 +75,13 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
         RasUtils.setName(name);
         
         if("emp".equals(groupName)){
+            groupName = groupName1;
+        }
+        if("equality".equals(groupState)){
             groupName = name;
+        }
+        if("emp".equals(groupName)){
+            throw new RuntimeException("gropuName不能为空");
         }
         RasUtils.setGroupName(groupName);
         
@@ -84,7 +93,7 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
                 RasUtils.setGroupState(GroupState.equality);
                 List<String> registUrls2 = getRegistUrls();
                 RasUtils.setRegistUrls(registUrls2);
-                RasUtils.setGroupSynTime(groupSynTime);
+                RasUtils.setGroupSynTime(groupSynTime * 1000);
                 RequestTokenUtils.setTokenByEquality();
                 //集群注册
                 groupService.registTo(registUrls2);

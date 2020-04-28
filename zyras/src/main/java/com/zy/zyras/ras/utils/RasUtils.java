@@ -86,7 +86,7 @@ public class RasUtils {
      * 获取注册中心名
      * @return 
      */
-    public static String getRasName(){
+    public static String getName(){
         return name;
     }
     

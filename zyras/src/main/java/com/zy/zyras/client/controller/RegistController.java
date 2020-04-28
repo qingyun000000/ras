@@ -14,12 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/*
-* 提供客户端注册接口，包括统一注册接口，服务提供方注册接口，服务调用方注册接口，服务提供和调用方注册接口，网关注册接口
-* 统一注册接口：传入注册类型
-* 
-*/
-
 /**
  * 服务注册Controller
  * @author wuhailong

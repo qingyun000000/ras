@@ -6,7 +6,4 @@ package com.zy.zyras.client.domain;
  */
 public class CustomerClient extends Client{
     
-    
-    
-    
 }

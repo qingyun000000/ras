@@ -3,6 +3,7 @@ package com.zy.zyrasc.fuse;
 import com.zy.zyrasc.client.Clients;
 import com.zy.zyrasc.client.ServicePool;
 import com.zy.zyrasc.enums.FuseState;
+import com.zy.zyrasc.exception.ServicePoolNotExistException;
 import com.zy.zyrasc.vo.ServiceClient;
 import java.util.Date;
 import java.util.List;
@@ -19,13 +20,14 @@ public class FuseService {
      * @param serviceName
      * @param url
      * @return 
+     * @throws com.zy.zyrasc.exception.ServicePoolNotExistException 
      */
-    public static boolean fuse(String ras, String serviceName, String url){
+    public static boolean fuse(String ras, String serviceName, String url) throws ServicePoolNotExistException{
         
         ServicePool pool = Clients.getServicePoolMap().get(ras);
         if(pool == null){
             System.out.println("服务池未建立");
-            return false;
+            throw new ServicePoolNotExistException(ras + "服务池没有建立");
         }
         
         //新服务不熔断（服务的全部客户端掉线完后，视为新服务）

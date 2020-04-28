@@ -1,16 +1,13 @@
 package com.zy.zyras.client.controller;
 
-import cn.whl.commonutils.exception.InputWrongException;
 import cn.whl.commonutils.log.LoggerTools;
 import cn.whl.commonutils.service.result.ResultParam;
 import cn.whl.commonutils.service.result.ServiceResult;
 import cn.whl.commonutils.service.result.ServiceResultTool;
 import cn.whl.commonutils.verificate.VerificateTool;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
-import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

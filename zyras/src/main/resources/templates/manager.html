@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <title>TODO supply a title</title>
@@ -11,50 +6,58 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div style="margin-left: 10%;width: 80%;">
-            <hr style="color: #cccccc"/>
-            <h1 style="color: blue;">RAS管理页 <span style="font-size: small;color: blueviolet;">version 0.1</span></h1>
-            <p>服务器名：<span> </span></p>
-            <hr style="color: #cccccc"/>
+        <div style="margin-left: 10%;width: 80%;background:#cccccc">
+            <h1 style="color: blue;margin-left: 10%;margin-top: 10px;line-height: 80px;">R A S 管 理 页 <span style="font-size: small;color: #666666;">version 0.1</span></h1>
         </div>
-        <div style="margin-left: 10%;width: 80%;">
-            <h3 style="color: blue;">集群管理</h3>
+        <div style="margin-left: 10%;margin-top: 50px;width: 80%;">
+            <h3 style="color: blue;margin-left: 2%;">基本信息</h3>
+            <hr style="color: #cccccc"/>
+            <p style="margin-left: 3%;">
+                集群名：<span th:text="${groupName}" style="margin-right: 10%;"></span>
+                服务器名：<span th:text="${name}"></span>
+            </p>
+        </div>
+        <div style="margin-left: 10%;margin-top: 50px;width: 80%;">
+            <h3 style="color: blue;margin-left: 2%;">集群管理</h3>
+            <hr style="color: #cccccc"/>
             <p th:each="ras : ${rass}">
                 <span th:text="${ras.name}"></span>
                 <span th:text="${ras.url}"></span>
             </p>
-            <hr style="color: #cccccc"/>
         </div>
-        <div style="margin-left: 10%;width: 80%;">
-            <h3 style="color: blue;">客户端管理</h3>
-            <h4>非限定服务提供方列表</h4>
+        <div style="margin-left: 10%;margin-top: 50px;width: 80%;">
+            <h3 style="color: blue;margin-left: 2%;">客户端管理</h3>
+            <hr style="color: #cccccc"/>
+            <h4 style="margin-left: 3%;">非限定服务提供方列表</h4>
             <p th:each="service : ${services}">
                 <span th:text="${service.name}" style="margin-right: 10%;"></span>
                 <span th:text="${service.uniName}" style="margin-right: 10%;"></span>
                 <span th:text="${service.url}"></span>
             </p>
-            <h4>限定服务提供方列表</h4>
+            <h4 style="margin-left: 3%;">限定服务提供方列表</h4>
             <p th:each="lservice : ${limitServices}">
                 <span th:text="${lservice.name}" style="margin-right: 10%;"></span>
                 <span th:text="${lservice.uniName}" style="margin-right: 10%;"></span>
                 <span th:text="${lservice.url}"></span></p>
-            <h4>服务消费方列表</h4>
+            <h4 style="margin-left: 3%;">服务消费方列表</h4>
             <p th:each="customer : ${customers}">
                 <span th:text="${customer.name}" style="margin-right: 10%;"></span>
                 <span th:text="${customer.uniName}" style="margin-right: 10%;"></span>
                 <span th:text="${customer.url}"></span>
             </p>
-            <h4>服务网关方列表</h4>
+            <h4 style="margin-left: 3%;">服务网关方列表</h4>
             <p th:each="gateway : ${gateways}">
                 <span th:text="${gateway.name}" style="margin-right: 10%;"></span>
                 <span th:text="${gateway.uniName}" style="margin-right: 10%;"></span>
                 <span th:text="${gateway.url}"></span>
             </p>
+        </div>
+        <div style="margin-left: 10%;margin-top: 50px;width: 80%;">
+            <h3 style="color: blue;margin-left: 2%;">性能监控</h3>
             <hr style="color: #cccccc"/>
         </div>
-        <div style="margin-left: 10%;width: 80%;">
-            <h3 style="color: blue;">性能监控</h3>
-            <hr style="color: #cccccc"/>
+        <div style="margin-left: 10%;width: 80%;background:#cccccc">
+            <h1 style="color: blue;margin-left: 10%;margin-top: 10px;line-height: 80px;">&nbsp;</h1>
         </div>
     </body>
 </html>

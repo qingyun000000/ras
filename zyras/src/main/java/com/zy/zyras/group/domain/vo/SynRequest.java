@@ -5,44 +5,25 @@ package com.zy.zyras.group.domain.vo;
  * @author wuhailong
  */
 public class SynRequest {
- 
-    /**
-     * 注册中心名
-     */
-    private String name;
+
+    private String rasPoolJson;
     
-    /**
-     * 注册中心url
-     */
-    private String url;
-    
-    /**
-     * 注册中心port
-     */
-    private int port;
+    private String clientPoolJson;
 
-    public String getName() {
-        return name;
+    public String getRasPoolJson() {
+        return rasPoolJson;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRasPoolJson(String rasPoolJson) {
+        this.rasPoolJson = rasPoolJson;
     }
 
-    public String getUrl() {
-        return url;
+    public String getClientPoolJson() {
+        return clientPoolJson;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
+    public void setClientPoolJson(String clientPoolJson) {
+        this.clientPoolJson = clientPoolJson;
     }
     
     

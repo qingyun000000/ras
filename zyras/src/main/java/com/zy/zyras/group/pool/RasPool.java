@@ -1,6 +1,7 @@
 package com.zy.zyras.group.pool;
 
 import cn.whl.commonutils.log.LoggerTools;
+import com.alibaba.fastjson.JSON;
 import com.zy.zyras.group.domain.Ras;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,13 +61,28 @@ public class RasPool {
     }
 
     /**
-     * 注册
+     * 注册或更新
      * @param ras 
      */
     public void addRas(Ras ras) {
         rass.put(ras.getName(), ras);
     }
 
+    /**
+     * 增量同步服务
+     * @param newRass 
+     */
+    public void synRass(Map<String, Ras> newRass){
+        System.out.println(JSON.toJSON(rass));
+        System.out.println(JSON.toJSON(newRass));
+        for(String str : newRass.keySet()){
+            if(!rass.containsKey(str)){
+                rass.put(str, newRass.get(str));
+            }else{
+                System.out.println("注册中心已存在，不同步");
+            }
+        }
+    }
    
 
 }

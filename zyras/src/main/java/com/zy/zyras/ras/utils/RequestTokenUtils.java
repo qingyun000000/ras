@@ -16,7 +16,7 @@ public class RequestTokenUtils {
     
     public static void setTokenBySingle() {
         try {
-            String name = RasUtils.getRasName();
+            String name = RasUtils.getName();
             String token = TokenTool.createToken(name, new RasSingleModeToken());
             
             RasUtils.setRequestToken(token);

@@ -12,9 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/*
-* 单例模式，保存客户端列表
- */
 /**
  * 池：客户端
  *
@@ -104,6 +101,16 @@ public class ClientPool {
     public boolean customerContainsName(String name) {
         return customerClients.containsKey(name);
     }
+    
+    /**
+     * 服务调用方客户端包含服务名
+     *
+     * @param name
+     * @return
+     */
+    public boolean gatewayContainsName(String name) {
+        return gatewayClients.containsKey(name);
+    }
 
     /**
      * 获取service
@@ -143,7 +150,34 @@ public class ClientPool {
      * @return
      */
     public boolean addLimitService(String name, Map<String, LimitedServiceClient> service) {
+        Map<String, LimitedServiceClient> get = limitedServiceClients.get(name);
+        if(get != null){
+            System.out.println("服务已存在，无法新增");
+            return false;
+        }
         limitedServiceClients.put(name, service);
+        return true;
+    }
+    
+    /**
+     * 增量同步LimitedService
+     * 
+     * @param name
+     * @param newLimitedServiceClients
+     */
+    public boolean synLimitService(String name, Map<String, LimitedServiceClient> newLimitedServiceClients) {
+        Map<String, LimitedServiceClient> get = limitedServiceClients.get(name);
+        if(get == null){
+            System.out.println("服务不存在，无法增量同步");
+            return false;
+        }
+        for(String str : newLimitedServiceClients.keySet()){
+            if(!get.containsKey(str)){
+                get.put(str, newLimitedServiceClients.get(str));
+            }else{
+                System.out.println("客户端已存在，不同步");
+            }
+        }
         return true;
     }
 
@@ -155,7 +189,33 @@ public class ClientPool {
      * @return
      */
     public boolean addService(String name, Map<String, ServiceClient> service) {
+        Map<String, ServiceClient> get = serviceClients.get(name);
+        if(get != null){
+            System.out.println("服务已存在，无法新增");
+            return false;
+        }
         serviceClients.put(name, service);
+        return true;
+    }
+
+    /**
+     * 增量同步Service
+     *
+     * @param newServiceClients
+     */
+    public boolean synService(String name, Map<String, ServiceClient> newServiceClients) {
+        Map<String, ServiceClient> get = serviceClients.get(name);
+        if(get == null){
+            System.out.println("服务不存在，无法增量同步");
+            return false;
+        }
+        for(String str : newServiceClients.keySet()){
+            if(!get.containsKey(str)){
+                get.put(str, newServiceClients.get(str));
+            }else{
+                System.out.println("客户端已存在，不同步");
+            }
+        }
         return true;
     }
 
@@ -205,6 +265,7 @@ public class ClientPool {
 
     /**
      * 根据token判断对方是否是正常客户端
+     *
      * @param token
      * @return
      */
@@ -241,39 +302,44 @@ public class ClientPool {
 
     /**
      * 获取所有customer
-     * @return 
+     *
+     * @return
      */
-    public Map<String, CustomerClient> getAllCustomer() {
+    public Map<String, CustomerClient> getAllCustomers() {
         return customerClients;
     }
-    
+
     /**
      * 获取所有gateway
-     * @return 
+     *
+     * @return
      */
-    public Map<String, GatewayClient> getAllGateway() {
+    public Map<String, GatewayClient> getAllGateways() {
         return gatewayClients;
     }
-    
+
     /**
      * 获取所有serviceClients
-     * @return 
+     *
+     * @return
      */
-    public Map<String, Map<String, ServiceClient>> getAllService() {
+    public Map<String, Map<String, ServiceClient>> getAllServices() {
         return serviceClients;
     }
-    
+
     /**
      * 获取所有limitedServiceClients
-     * @return 
+     *
+     * @return
      */
-    public Map<String, Map<String, LimitedServiceClient>> getAllLimitedService() {
+    public Map<String, Map<String, LimitedServiceClient>> getAllLimitedServices() {
         return limitedServiceClients;
     }
 
     /**
      * 获取所有客户端
-     * @return 
+     *
+     * @return
      */
     public Set<Client> getAllClients() {
         Set<Client> clients = new HashSet<>();
@@ -298,8 +364,9 @@ public class ClientPool {
 
     /**
      * 移除限制服务提供方客户端
+     *
      * @param name
-     * @param uniName 
+     * @param uniName
      */
     public void removeLimitedServiceClient(String name, String uniName) {
         limitedServiceClients.get(name).remove(uniName);
@@ -307,8 +374,9 @@ public class ClientPool {
 
     /**
      * 移除非限制服务提供方客户端
+     *
      * @param name
-     * @param uniName 
+     * @param uniName
      */
     public void removeServiceClient(String name, String uniName) {
         serviceClients.get(name).remove(uniName);
@@ -316,7 +384,8 @@ public class ClientPool {
 
     /**
      * 移除网关
-     * @param name 
+     *
+     * @param name
      */
     public void removeGatewayClient(String name) {
         gatewayClients.remove(name);
@@ -324,7 +393,8 @@ public class ClientPool {
 
     /**
      * 移除服务调用方
-     * @param name 
+     *
+     * @param name
      */
     public void removeCustomerClient(String name) {
         customerClients.remove(name);

@@ -47,13 +47,13 @@ import org.springframework.stereotype.Service;
 public class ClientServiceImpl implements ClientService {
 
     //服务提供方修改锁
-    private Lock updateServiceLock = new ReentrantLock();
+    private final Lock updateServiceLock = new ReentrantLock();
 
     //服务调用方修改锁
-    private Lock updateCustomerLock = new ReentrantLock();
+    private final Lock updateCustomerLock = new ReentrantLock();
 
     //网关修改锁
-    private Lock updateGatewayLock = new ReentrantLock();
+    private final Lock updateGatewayLock = new ReentrantLock();
 
     @Override
     public RegistResponse regist(RegistRequest request) throws ServiceRunException, ExistException, InputWrongException {
@@ -95,13 +95,8 @@ public class ClientServiceImpl implements ClientService {
                     //在service中已经存在
                     throw new ExistException("服务名在非限定服务提供方中");
                 }
-                if (contains == 2) {
-                    //在limitedService中已经存在
-                    Map<String, LimitedServiceClient> limitService = pool.getLimitService(name);
-                    serviceClient = this.limitedServiceRegist(limitService, request);
-                }
-                if (contains == 0) {
-                    serviceClient = this.limitedServiceRegist(pool, request);
+                if (contains == 0 || contains == 2) {
+                    serviceClient = this.limitedServiceRegist(contains, pool, request);
                 }
                 response.setServiceType(ServiceType.limited);
                 try {
@@ -111,18 +106,13 @@ public class ClientServiceImpl implements ClientService {
                 }
             } else {
                 //默认，service类型注册
-                if (contains == 1) {
-                    //在service中已经存在
-                    Map<String, ServiceClient> service = pool.getService(name);
-                    serviceClient = this.serviceRegist(service, request);
-                }
                 if (contains == 2) {
                     //在limitedService中已经存在
                     throw new ExistException("服务名在限定服务提供方中");
 
                 }
-                if (contains == 0) {
-                    serviceClient = this.serviceRegist(pool, request);
+                if (contains == 0 || contains == 1) {
+                    serviceClient = this.serviceRegist(contains, pool, request);
                 }
                 response.setServiceType(ServiceType.all);
                 try {
@@ -141,6 +131,7 @@ public class ClientServiceImpl implements ClientService {
         response.setUrl(serviceClient.getUrl());
         response.setRas(RasUtils.getGroupName());
         response.setToken(serviceClient.getToken());
+        response.setBalanceMethod(RasUtils.getBalanceMethod());
         
 
         return response;
@@ -189,6 +180,7 @@ public class ClientServiceImpl implements ClientService {
         response.setUrl(customerClient.getUrl());
         response.setToken(customerClient.getToken());
         response.setRas(RasUtils.getGroupName());
+        response.setBalanceMethod(RasUtils.getBalanceMethod());
 
         return response;
     }
@@ -235,6 +227,7 @@ public class ClientServiceImpl implements ClientService {
         response.setUrl(customerClient.getUrl());
         response.setToken(customerClient.getToken());
         response.setRas(RasUtils.getGroupName());
+        response.setBalanceMethod(RasUtils.getBalanceMethod());
 
         return response;
     }
@@ -249,7 +242,7 @@ public class ClientServiceImpl implements ClientService {
         updateGatewayLock.lock();
 
         try {
-            boolean contains = pool.customerContainsName(name);
+            boolean contains = pool.gatewayContainsName(name);
             if (contains) {
                 //在customer中已经存在
                 throw new ExistException("服务名在网关中");
@@ -282,94 +275,96 @@ public class ClientServiceImpl implements ClientService {
         response.setUrl(gatewayClient.getUrl());
         response.setToken(gatewayClient.getToken());
         response.setRas(RasUtils.getGroupName());
+        response.setBalanceMethod(RasUtils.getBalanceMethod());
 
         return response;
     }
 
-    /**
-     * limitedService服务增加实例
-     *
-     * @param limitService
-     * @param request
-     */
-    private LimitedServiceClient limitedServiceRegist(Map<String, LimitedServiceClient> limitService, RegistRequest request) throws ServiceRunException, InputWrongException {
-        //用map来校验之前的interList是否都一致
-        Map<String, Integer> interNumMap = new HashMap<>();
-        boolean empty = true;   //第一条还没有放入，空
-        for (LimitedServiceClient client : limitService.values()) {
-            Set<String> interList = client.getInterList();
-            if (!empty && interList.size() != interNumMap.size()) {
-                //服务中的interList与之前的不一致
-                throw new ServiceRunException("服务注册");
-            }
-            for (String interUrl : interList) {
-                if (interNumMap.containsKey(interUrl)) {
-                    interNumMap.put(interUrl, interNumMap.get(interUrl) + 1);
-                } else {
-                    interNumMap.put(interUrl, 1);
-                }
-            }
-            if (!empty) {
-                empty = false;
-            }
-        }
-        for (int num : interNumMap.values()) {
-            if (num != limitService.size()) {
-                //inter的数量与limitService数量不一致
-                throw new ServiceRunException("服务注册");
-            }
-        }
-        //新的interList校验和Set封装
-        Set<String> newInterList = new HashSet<>();
-        String[] inters = request.getInterList().split(",");
-        if (inters.length != interNumMap.size()) {
-            //服务中的interList与之前的不一致
-            throw new ServiceRunException("服务注册");
-        }
-        for (String interUrl : inters) {
-            if (interNumMap.containsKey(interUrl)) {
-                interNumMap.put(interUrl, interNumMap.get(interUrl) + 1);
-            } else {
-                interNumMap.put(interUrl, 1);
-            }
-            newInterList.add(interUrl);
-        }
-        for (int num : interNumMap.values()) {
-            if (num != limitService.size()) {
-                //inter的数量与limitService数量不一致
-                throw new InputWrongException("可访问接口（与注册中心现有同名服务不一致）");
-            }
-        }
-
-        //加入服务
-        String uniName;
-        if (VerificateTool.notEmpty(request.getUniName())) {
-            uniName = request.getUniName();
-        } else {
-            uniName = request.getUrl();
-        }
-        LimitedServiceClient limitedServiceClient = new LimitedServiceClient();
-        limitedServiceClient.setName(request.getName());
-        limitedServiceClient.setUniName(uniName);
-        limitedServiceClient.setUrl(request.getUrl());
-        try {
-            limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
-        } catch (Exception ex) {
-            throw new ServiceRunException("token生成失败");
-        }
-        limitedServiceClient.setInterList(newInterList);
-
-        limitService.put(uniName, limitedServiceClient);
-
-        return limitedServiceClient;
-    }
+//    /**
+//     * limitedService服务增加实例
+//     *
+//     * @param limitService
+//     * @param request
+//     */
+//    @Deprecated
+//    private LimitedServiceClient verificationInterList(Map<String, LimitedServiceClient> limitService, RegistRequest request) throws ServiceRunException, InputWrongException {
+//        //用map来校验之前的interList是否都一致
+//        Map<String, Integer> interNumMap = new HashMap<>();
+//        boolean empty = true;   //第一条还没有放入，空
+//        for (LimitedServiceClient client : limitService.values()) {
+//            Set<String> interList = client.getInterList();
+//            if (!empty && interList.size() != interNumMap.size()) {
+//                //服务中的interList与之前的不一致
+//                throw new ServiceRunException("服务注册");
+//            }
+//            for (String interUrl : interList) {
+//                if (interNumMap.containsKey(interUrl)) {
+//                    interNumMap.put(interUrl, interNumMap.get(interUrl) + 1);
+//                } else {
+//                    interNumMap.put(interUrl, 1);
+//                }
+//            }
+//            if (!empty) {
+//                empty = false;
+//            }
+//        }
+//        for (int num : interNumMap.values()) {
+//            if (num != limitService.size()) {
+//                //inter的数量与limitService数量不一致
+//                throw new ServiceRunException("服务注册");
+//            }
+//        }
+//        //新的interList校验和Set封装
+//        Set<String> newInterList = new HashSet<>();
+//        String[] inters = request.getInterList().split(",");
+//        if (inters.length != interNumMap.size()) {
+//            //服务中的interList与之前的不一致
+//            throw new ServiceRunException("服务注册");
+//        }
+//        for (String interUrl : inters) {
+//            if (interNumMap.containsKey(interUrl)) {
+//                interNumMap.put(interUrl, interNumMap.get(interUrl) + 1);
+//            } else {
+//                interNumMap.put(interUrl, 1);
+//            }
+//            newInterList.add(interUrl);
+//        }
+//        for (int num : interNumMap.values()) {
+//            if (num != limitService.size()) {
+//                //inter的数量与limitService数量不一致
+//                throw new InputWrongException("可访问接口（与注册中心现有同名服务不一致）");
+//            }
+//        }
+//
+//        //加入服务
+//        String uniName;
+//        if (VerificateTool.notEmpty(request.getUniName())) {
+//            uniName = request.getUniName();
+//        } else {
+//            uniName = request.getUrl();
+//        }
+//        LimitedServiceClient limitedServiceClient = new LimitedServiceClient();
+//        limitedServiceClient.setName(request.getName());
+//        limitedServiceClient.setUniName(uniName);
+//        limitedServiceClient.setUrl(request.getUrl());
+//        try {
+//            limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+//        } catch (Exception ex) {
+//            throw new ServiceRunException("token生成失败");
+//        }
+//        limitedServiceClient.setInterList(newInterList);
+//
+//        limitService.put(uniName, limitedServiceClient);
+//
+//        return limitedServiceClient;
+//    }
 
     /**
      * limitedService服务新增服务
      *
      * @param request
      */
-    private LimitedServiceClient limitedServiceRegist(ClientPool pool, RegistRequest request) throws ServiceRunException {
+    private LimitedServiceClient limitedServiceRegist(int contains, ClientPool pool, RegistRequest request) throws ServiceRunException {
         //interList封装
         String[] inters = request.getInterList().split(",");
         Set<String> newInterList = new HashSet<>();
@@ -396,49 +391,24 @@ public class ClientServiceImpl implements ClientService {
         Map<String, LimitedServiceClient> newLimitedSevice = new HashMap<>();
         newLimitedSevice.put(uniName, limitedServiceClient);
 
-        pool.addLimitService(request.getName(), newLimitedSevice);
+        if(contains == 0){
+            pool.addLimitService(request.getName(), newLimitedSevice);
+        }else{
+            pool.synLimitService(request.getName(), newLimitedSevice);
+        }
 
         return limitedServiceClient;
     }
 
     /**
-     * service服务增加实例
-     *
-     * @param service
-     * @param request
-     * @return
-     */
-    private ServiceClient serviceRegist(Map<String, ServiceClient> service, RegistRequest request) throws ServiceRunException {
-        //加入服务
-        String uniName;
-        if (VerificateTool.notEmpty(request.getUniName())) {
-            uniName = request.getUniName();
-        } else {
-            uniName = request.getUrl();
-        }
-        ServiceClient serviceClient = new ServiceClient();
-        serviceClient.setName(request.getName());
-        serviceClient.setUniName(uniName);
-        serviceClient.setUrl(request.getUrl());
-        try {
-            serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
-        } catch (Exception ex) {
-            throw new ServiceRunException("token生成失败");
-        }
-        service.put(uniName, serviceClient);
-
-        return serviceClient;
-    }
-
-    /**
-     * service服务新增服务
+     * service服务新增
      *
      * @param pool
      * @param request
      * @return
      */
-    private ServiceClient serviceRegist(ClientPool pool, RegistRequest request) throws ServiceRunException {
-        //加入服务
+    private ServiceClient serviceRegist(int contains, ClientPool pool, RegistRequest request) throws ServiceRunException {
+        //组装服务
         String uniName;
         if (VerificateTool.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
@@ -454,10 +424,14 @@ public class ClientServiceImpl implements ClientService {
         } catch (Exception ex) {
             throw new ServiceRunException("token生成失败");
         }
+        
         Map<String, ServiceClient> newSevice = new HashMap<>();
         newSevice.put(uniName, serviceClient);
-
-        pool.addService(request.getName(), newSevice);
+        if(contains == 0){
+            pool.addService(request.getName(), newSevice);
+        }else{
+            pool.synService(request.getName(), newSevice);
+        }
 
         return serviceClient;
     }
@@ -475,7 +449,7 @@ public class ClientServiceImpl implements ClientService {
         }
 
         List<ServiceResponse> responses = new ArrayList<>();
-        Map<String, Map<String, ServiceClient>> allService = pool.getAllService();
+        Map<String, Map<String, ServiceClient>> allService = pool.getAllServices();
         for (String serviceName : allService.keySet()) {
             ServiceResponse response = new ServiceResponse();
             Map<String, ServiceClient> service = allService.get(serviceName);
@@ -491,7 +465,7 @@ public class ClientServiceImpl implements ClientService {
             response.setServiceClients(serviceClients);
             responses.add(response);
         }
-        Map<String, Map<String, LimitedServiceClient>> allLimitedService = pool.getAllLimitedService();
+        Map<String, Map<String, LimitedServiceClient>> allLimitedService = pool.getAllLimitedServices();
         for (String serviceName : allLimitedService.keySet()) {
             ServiceResponse response = new ServiceResponse();
             Map<String, LimitedServiceClient> service = allLimitedService.get(serviceName);
@@ -563,8 +537,7 @@ public class ClientServiceImpl implements ClientService {
         return response;
     }
 
-    @Override
-    public boolean removeClient(Client client) {
+    private boolean removeClient(Client client) {
         ClientPool pool = ClientPool.getInstance();
         if (client instanceof LimitedServiceClient) {
             pool.removeLimitedServiceClient(client.getName(), client.getUniName());

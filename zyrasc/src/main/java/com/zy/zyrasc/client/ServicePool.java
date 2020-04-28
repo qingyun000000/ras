@@ -81,6 +81,9 @@ public class ServicePool {
         if (service == null || service.isEmpty()) {
             System.out.println("获取服务客户端");
             List<LimitedServiceClient> service2 = limitedServiceClients.get(name);
+            if(service == null){
+                return response;
+            }
             for (LimitedServiceClient client : service2) {
                 System.out.println(client.getUniName());
                 if ((client.getFused() == FuseState.正常|| client.getFused() == FuseState.半熔断) && client.getInterList().contains(url)) {

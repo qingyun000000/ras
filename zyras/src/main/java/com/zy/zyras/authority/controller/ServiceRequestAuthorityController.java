@@ -8,7 +8,6 @@ import cn.whl.commonutils.verificate.VerificateTool;
 import com.zy.zyras.authority.domain.vo.RequestTokenRequest;
 import com.zy.zyras.authority.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

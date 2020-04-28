@@ -2,6 +2,7 @@ package com.zy.zyras.client.domain.vo;
 
 import com.zy.zyras.client.domain.enums.ClientType;
 import com.zy.zyras.client.domain.enums.ServiceType;
+import com.zy.zyras.ras.enums.BalanceMethod;
 
 /**
  * 返回报文：注册
@@ -43,6 +44,11 @@ public class RegistResponse {
     * token 身份识别标识
     */
     private String token;
+    
+    /*
+    * 负载均衡策略
+    */
+    private BalanceMethod balanceMethod;
 
     public String getRas() {
         return ras;
@@ -98,6 +104,14 @@ public class RegistResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public BalanceMethod getBalanceMethod() {
+        return balanceMethod;
+    }
+
+    public void setBalanceMethod(BalanceMethod balanceMethod) {
+        this.balanceMethod = balanceMethod;
     }
     
 }

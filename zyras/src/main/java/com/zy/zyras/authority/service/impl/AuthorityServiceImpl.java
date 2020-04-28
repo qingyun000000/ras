@@ -20,9 +20,8 @@ public class AuthorityServiceImpl implements AuthorityService{
     public RequestTokenResponse getServiceRequestToken(RequestTokenRequest request) throws TokenWrongException {
         LoggerTools.log4j_write.info("获取服务调用token");
         ClientPool pool = ClientPool.getInstance();
-        /*
-         * 客户端校验
-         */
+        
+        //客户端校验
         boolean auth = pool.containsCustomerOrServiceOrGatewayByToken(request.getToken());
         if(!auth){
             LoggerTools.log4j_write.info("客户校验失败");
@@ -30,7 +29,7 @@ public class AuthorityServiceImpl implements AuthorityService{
         }
         
         RequestTokenResponse response = new RequestTokenResponse();
-        response.setRasName(RasUtils.getRasName());
+        response.setRasName(RasUtils.getGroupName());
         response.setRequestToken(RasUtils.getRequestToken());
         return response;
     }
