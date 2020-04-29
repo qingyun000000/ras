@@ -6,7 +6,6 @@ import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;
 import com.zy.zyras.client.domain.LimitedServiceClient;
 import com.zy.zyras.client.domain.ServiceClient;
-import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -164,6 +163,7 @@ public class ClientPool {
      * 
      * @param name
      * @param newLimitedServiceClients
+     * @return 
      */
     public boolean synLimitService(String name, Map<String, LimitedServiceClient> newLimitedServiceClients) {
         Map<String, LimitedServiceClient> get = limitedServiceClients.get(name);
@@ -201,7 +201,9 @@ public class ClientPool {
     /**
      * 增量同步Service
      *
+     * @param name
      * @param newServiceClients
+     * @return 
      */
     public boolean synService(String name, Map<String, ServiceClient> newServiceClients) {
         Map<String, ServiceClient> get = serviceClients.get(name);

@@ -88,5 +88,10 @@ public interface ClientService {
      */
     public void heartbeat();
 
+    /**
+     * 同步客户端
+     * @param clientPool 
+     */
+    public void synClients(com.zy.zyras.group.domain.vo.ClientPool clientPool);
     
 }

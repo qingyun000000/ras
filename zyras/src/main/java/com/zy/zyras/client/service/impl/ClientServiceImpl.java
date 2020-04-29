@@ -546,13 +546,21 @@ public class ClientServiceImpl implements ClientService {
     private boolean removeClient(Client client) {
         ClientPool pool = ClientPool.getInstance();
         if (client instanceof LimitedServiceClient) {
+            updateServiceLock.lock();
             pool.removeLimitedServiceClient(client.getName(), client.getUniName());
+            updateServiceLock.unlock();
         } else if (client instanceof ServiceClient) {
+            updateServiceLock.lock();
             pool.removeServiceClient(client.getName(), client.getUniName());
+            updateServiceLock.unlock();
         } else if (client instanceof GatewayClient) {
+            updateGatewayLock.lock();
             pool.removeGatewayClient(client.getName());
+            updateGatewayLock.unlock();
         } else if (client instanceof CustomerClient) {
+            updateCustomerLock.lock();
             pool.removeCustomerClient(client.getName());
+            updateCustomerLock.unlock();
         }
 
         return true;
@@ -607,6 +615,55 @@ public class ClientServiceImpl implements ClientService {
             }
         }
         LoggerTools.log4j_write.info("心跳连接检测完成");
+    }
+    
+    @Override
+    public void synClients(com.zy.zyras.group.domain.vo.ClientPool clientPool){
+        //同步客户端列表,同步全部为增加，删除客户端均由心跳连接处理
+        ClientPool clientPoolLocal = ClientPool.getInstance();
+        
+        //1.限制服务提供方
+        updateServiceLock.lock();
+        Map<String, Map<String, LimitedServiceClient>> allLimitedServices = clientPool.getAllLimitedServices();
+        for (String str : allLimitedServices.keySet()) {
+            if (clientPoolLocal.serviceContainsName(str) != 2) {
+                clientPoolLocal.addLimitService(str, allLimitedServices.get(str));
+            } else {
+                clientPoolLocal.synLimitService(str, allLimitedServices.get(str));
+            }
+        }
+        //2.非限制服务提供方
+        Map<String, Map<String, ServiceClient>> allServices = clientPool.getAllServices();
+        for (String str : allServices.keySet()) {
+            if (clientPoolLocal.serviceContainsName(str) != 1) {
+                clientPoolLocal.addService(str, allServices.get(str));
+            } else {
+                clientPoolLocal.synService(str, allServices.get(str));
+            }
+        }
+        updateServiceLock.unlock();
+        //3.服务调用方
+        updateCustomerLock.lock();
+        Map<String, CustomerClient> allCustomers = clientPool.getAllCustomers();
+        for (String str : allCustomers.keySet()) {
+            if (!clientPoolLocal.customerContainsName(str)) {
+                clientPoolLocal.addCustomer(allCustomers.get(str));
+            } else {
+                System.out.println("已存在，不同步");
+            }
+        }
+        updateCustomerLock.unlock();
+        //4.网关
+        updateGatewayLock.lock();
+        Map<String, GatewayClient> allGateways = clientPool.getAllGateways();
+        for (String str : allGateways.keySet()) {
+            if (!clientPoolLocal.gatewayContainsName(str)) {
+                clientPoolLocal.addGateway(allGateways.get(str));
+            } else {
+                System.out.println("已存在，不同步");
+            }
+        }
+        updateGatewayLock.unlock();
     }
 
 }
