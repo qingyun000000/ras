@@ -34,8 +34,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.apache.catalina.Executor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -563,18 +569,31 @@ public class ClientServiceImpl implements ClientService {
         //获取客户端
         ClientPool pool = ClientPool.getInstance();
         Set<Client> Clients = pool.getAllClients();
+        
+        //创建线程池
+        ExecutorService threadPool = Executors.newCachedThreadPool();
         for (Client client : Clients) {
             //时间校验
             if (client.getTms() == null || date - client.getTms() > hearbeatTime) {
-                LoggerTools.log4j_write.info("连接" + client.getUniName());
-                Map<String, Object> params = new HashMap<>();
-                params.put("ras", RasUtils.getGroupName());
-                String result = HttpUtil.doPost(client.getUrl() + "/zyras/heartbeat", params);
-                if (result != null) {
-                    HeartbeatResponse response = JSON.parseObject(result, HeartbeatResponse.class);
-                    if (response.isSuccess()) {
-                        client.setFailNum(0);
-                        client.setTms(date);
+                threadPool.submit(()->{
+                    LoggerTools.log4j_write.info("连接" + client.getUniName());
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("ras", RasUtils.getGroupName());
+                    String result = HttpUtil.doPost(client.getUrl() + "/zyras/heartbeat", params);
+                    if (result != null) {
+                        HeartbeatResponse response = JSON.parseObject(result, HeartbeatResponse.class);
+                        if (response.isSuccess()) {
+                            client.setFailNum(0);
+                            client.setTms(date);
+                        } else {
+                            if (client.getFailNum() >= hearbeatLeaveTimes - 1) {
+                                //心跳连接连续失败次数超过设置值，移除
+                                this.removeClient(client);
+                            } else {
+                                client.setFailNum(client.getFailNum() + 1);
+                                client.setTms(date);
+                            }
+                        }
                     } else {
                         if (client.getFailNum() >= hearbeatLeaveTimes - 1) {
                             //心跳连接连续失败次数超过设置值，移除
@@ -584,16 +603,7 @@ public class ClientServiceImpl implements ClientService {
                             client.setTms(date);
                         }
                     }
-                } else {
-                    if (client.getFailNum() >= hearbeatLeaveTimes - 1) {
-                        //心跳连接连续失败次数超过设置值，移除
-                        this.removeClient(client);
-                    } else {
-                        client.setFailNum(client.getFailNum() + 1);
-                        client.setTms(date);
-                    }
-                }
-
+                });
             }
         }
         LoggerTools.log4j_write.info("心跳连接检测完成");
