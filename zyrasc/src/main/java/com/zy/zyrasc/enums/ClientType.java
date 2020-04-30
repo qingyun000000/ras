@@ -5,5 +5,5 @@ package com.zy.zyrasc.enums;
  * @author wuhailong
  */
 public enum ClientType {
-    gateway, customer, service, serviceAndCustomer
+    GATEWAY, CUSTOMER, SERVICE, SERVICE_AND_CUSTOMER
 }

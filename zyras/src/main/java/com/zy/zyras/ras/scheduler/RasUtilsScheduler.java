@@ -1,8 +1,8 @@
 package com.zy.zyras.ras.scheduler;
 
 import cn.whl.commonutils.log.LoggerTools;
-import com.zy.zyras.ras.enums.GroupState;
-import com.zy.zyras.ras.enums.WorkState;
+import com.zy.zyras.ras.enums.GroupMode;
+import com.zy.zyras.ras.enums.WorkMode;
 import com.zy.zyras.ras.utils.RasUtils;
 import com.zy.zyras.ras.utils.RequestTokenUtils;
 import org.springframework.context.annotation.Configuration;
@@ -26,12 +26,12 @@ public class RasUtilsScheduler {
     }
     
     private void updateRequestToken() {
-        WorkState workState = RasUtils.getWorkState();
-        GroupState groupState = RasUtils.getGroupState();
+        WorkMode workState = RasUtils.getWorkMode();
+        GroupMode groupState = RasUtils.getGroupMode();
         
-        if(workState == WorkState.group){
+        if(workState == WorkMode.GROUP){
             //集群工作模式
-            if(groupState == GroupState.equality){
+            if(groupState == GroupMode.EQUALITY){
                 //平等模式
                 RequestTokenUtils.setTokenByEquality();
             }else{

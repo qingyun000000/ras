@@ -48,7 +48,7 @@ public class ServicePool {
      */
     public void addService(String name, List<ServiceClient> scs) {
         for(ServiceClient client : scs){
-            client.setFused(FuseState.正常);
+            client.setFused(FuseState.NORMAL);
             client.setFuseTime(new Date());
             client.setFuseTimes(0);
         }
@@ -62,7 +62,7 @@ public class ServicePool {
      */
     public void addLimitedService(String name, List<LimitedServiceClient> lscs) {
         for(LimitedServiceClient client : lscs){
-            client.setFused(FuseState.正常);
+            client.setFused(FuseState.NORMAL);
             client.setFuseTime(new Date());
             client.setFuseTimes(0);
         }
@@ -86,7 +86,7 @@ public class ServicePool {
             }
             for (LimitedServiceClient client : service2) {
                 System.out.println(client.getUniName());
-                if ((client.getFused() == FuseState.正常|| client.getFused() == FuseState.半熔断) && client.getInterList().contains(url)) {
+                if ((client.getFused() == FuseState.NORMAL|| client.getFused() == FuseState.HALF_FUSED) && client.getInterList().contains(url)) {
                     response.add(client);
                 }
             }
@@ -94,7 +94,7 @@ public class ServicePool {
             System.out.println("获取服务客户端");
             for (ServiceClient client : service) {
                 System.out.println(client.getUniName());
-                if (client.getFused() == FuseState.正常|| client.getFused() == FuseState.半熔断) {
+                if (client.getFused() == FuseState.NORMAL|| client.getFused() == FuseState.HALF_FUSED) {
                     response.add(client);
                 }
             }
@@ -115,13 +115,13 @@ public class ServicePool {
         if (service == null || service.isEmpty()) {
             List<LimitedServiceClient> service2 = limitedServiceClients.get(name);
             for (LimitedServiceClient client : service2) {
-                if (client.getFused() == FuseState.正常 && client.getInterList().contains(url)) {
+                if (client.getFused() == FuseState.NORMAL && client.getInterList().contains(url)) {
                     response.add(client);
                 }
             }
         } else {
             for (ServiceClient client : service) {
-                if (client.getFused() == FuseState.正常) {
+                if (client.getFused() == FuseState.NORMAL) {
                     response.add(client);
                 }
             }
@@ -207,15 +207,15 @@ public class ServicePool {
         Long date1 = date.getTime();
         for(List<LimitedServiceClient> clients : limitedServiceClients.values()){
             for(LimitedServiceClient client : clients){
-                if(client.getFused() == FuseState.熔断 && date1 - client.getFuseTime().getTime() > 10000){
-                    client.setFused(FuseState.半熔断);
+                if(client.getFused() == FuseState.FUSED && date1 - client.getFuseTime().getTime() > 10000){
+                    client.setFused(FuseState.HALF_FUSED);
                 }
             }
         }
         for(List<ServiceClient> clients : serviceClients.values()){
             for(ServiceClient client : clients){
-                if(client.getFused() == FuseState.熔断 && date1 - client.getFuseTime().getTime() > 10000){
-                    client.setFused(FuseState.半熔断);
+                if(client.getFused() == FuseState.FUSED && date1 - client.getFuseTime().getTime() > 10000){
+                    client.setFused(FuseState.HALF_FUSED);
                 }
             }
         }

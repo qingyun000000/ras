@@ -64,7 +64,7 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
             List<ClientStatus> clientStatuses = verificate();
             
             //网关处理映射
-            if(Clients.getType() == ClientType.gateway){
+            if(Clients.getType() == ClientType.GATEWAY){
                 ServiceNameService.setRealRasName(map);
             }
 
@@ -72,7 +72,7 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
             RegistService.regist(port, Clients.getType(), clientStatuses);
             
             //发现服务
-            if(Clients.getType() != ClientType.service){
+            if(Clients.getType() != ClientType.SERVICE){
                 FindServiceService.getAllService();
             }
             
@@ -109,9 +109,9 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
                 System.out.println("错误配置：service值错误[只能为all(默认值）/limited]");
                 throw new Exception("service值错误[只能为all(默认值）/limited]");
             }else if("all".equals(serviceType)){
-                status.setServiceType(ServiceType.all);
+                status.setServiceType(ServiceType.ALL);
             }else{
-                status.setServiceType(ServiceType.limited);
+                status.setServiceType(ServiceType.LIMITED);
             }
             if ("limited".equals(serviceType)) {
                 if (interList == null || "".equals(interList)) {
@@ -138,13 +138,13 @@ public class InitialService implements ApplicationListener<ContextRefreshedEvent
             throw new Exception("type不能为空");
         }
         if ("serviceAndCustomer".equals(type)) {
-            Clients.setType(ClientType.serviceAndCustomer);
+            Clients.setType(ClientType.SERVICE_AND_CUSTOMER);
         } else if ("service".equals(type)) {
-            Clients.setType(ClientType.service);
+            Clients.setType(ClientType.SERVICE);
         } else if ("customer".equals(type)) {
-            Clients.setType(ClientType.customer);
+            Clients.setType(ClientType.CUSTOMER);
         } else if ("gateway".equals(type)) {
-            Clients.setType(ClientType.gateway);
+            Clients.setType(ClientType.GATEWAY);
         } else {
             System.out.println("错误配置：type值错误[只能为serviceAndCustomer(默认值)/service/customer/gateway]");
             throw new Exception("type值错误[只能为serviceAndCustomer(默认值)/service/customer/gateway]");

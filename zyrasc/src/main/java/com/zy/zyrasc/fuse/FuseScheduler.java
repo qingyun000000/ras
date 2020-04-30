@@ -21,7 +21,7 @@ public class FuseScheduler {
      */
     @Scheduled(cron = "0/1 * * * * ?")
     private void openFused(){
-        if(Clients.getType() != ClientType.service){
+        if(Clients.getType() != ClientType.SERVICE){
             Map<String, ClientStatus> clientStatusMap = Clients.getClientStatusMap();
             for(String ras : clientStatusMap.keySet()){
                 FuseService.openFused(ras);

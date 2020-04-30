@@ -1,8 +1,8 @@
 package com.zy.zyras.ras.utils;
 
 import com.zy.zyras.ras.enums.BalanceMethod;
-import com.zy.zyras.ras.enums.GroupState;
-import com.zy.zyras.ras.enums.WorkState;
+import com.zy.zyras.ras.enums.GroupMode;
+import com.zy.zyras.ras.enums.WorkMode;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ public class RasUtils {
     /*
     * 注册中心工作模式
     */
-    private static volatile WorkState workState;
+    private static volatile WorkMode workMode;
     
     /*
     * 注册中心名
@@ -34,7 +34,7 @@ public class RasUtils {
     /*
     * 注册中心集群工作模式
     */
-    private static volatile GroupState groupState;
+    private static volatile GroupMode groupMode;
     
     /*
     * 注册地址
@@ -114,12 +114,12 @@ public class RasUtils {
         RasUtils.requestToken = requestToken;
     }
 
-    public static WorkState getWorkState() {
-        return workState;
+    public static WorkMode getWorkMode() {
+        return workMode;
     }
 
-    public static void setWorkState(WorkState workState) {
-        RasUtils.workState = workState;
+    public static void setWorkMode(WorkMode workMode) {
+        RasUtils.workMode = workMode;
     }
 
     public static String getGroupName() {
@@ -130,12 +130,12 @@ public class RasUtils {
         RasUtils.groupName = groupName;
     }
 
-    public static GroupState getGroupState() {
-        return groupState;
+    public static GroupMode getGroupMode() {
+        return groupMode;
     }
 
-    public static void setGroupState(GroupState groupState) {
-        RasUtils.groupState = groupState;
+    public static void setGroupMode(GroupMode groupMode) {
+        RasUtils.groupMode = groupMode;
     }
 
     public static List<String> getRegistUrls() {

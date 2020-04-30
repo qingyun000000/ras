@@ -44,7 +44,7 @@ public class ServiceVerificationService {
                 }
             }
 
-            if (clientStatus.getServiceType() == ServiceType.limited) {
+            if (clientStatus.getServiceType() == ServiceType.LIMITED) {
                 //判断请求
                 Set<String> interList = clientStatus.getInterList();
                 for (String str : interList) {

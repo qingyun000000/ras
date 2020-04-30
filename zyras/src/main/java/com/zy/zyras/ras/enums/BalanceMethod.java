@@ -5,5 +5,5 @@ package com.zy.zyras.ras.enums;
  * @author wuhailong
  */
 public enum BalanceMethod {
-    simple
+    SIMPLE
 }

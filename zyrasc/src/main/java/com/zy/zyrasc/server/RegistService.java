@@ -36,7 +36,7 @@ public class RegistService {
         if (uniName != null && !"".equals(uniName.trim())) {
             params.put("uniName", uniName);
         }
-        if (type == ClientType.service) {
+        if (type == ClientType.SERVICE) {
             params.put("serviceType", serviceType.name());
             if ("limited".equals(serviceType)) {
                 String interListString = "";
@@ -46,15 +46,15 @@ public class RegistService {
                 params.put("interList", interListString.substring(1));
             }
             result = HttpUtil.doPost(rasUrl + "/client/regist/serviceRegist", params);
-        } else if (type == ClientType.customer) {
+        } else if (type == ClientType.CUSTOMER) {
             try{
                 result = HttpUtil.doPost(rasUrl + "/client/regist/customerRegist", params);
             }catch(Exception ex){
                 System.out.println("暂时无法连接");
             }
-        } else if (type == ClientType.serviceAndCustomer) {
+        } else if (type == ClientType.SERVICE_AND_CUSTOMER) {
             params.put("serviceType", serviceType.name());
-            if(serviceType == ServiceType.limited){
+            if(serviceType == ServiceType.LIMITED){
                 String interListString = "";
                 for(String str : interList){
                     interListString = interListString + "," + str;
@@ -62,11 +62,11 @@ public class RegistService {
                 params.put("interList", interListString.substring(1));
             }
             result = HttpUtil.doPost(rasUrl + "/client/regist/serviceAndCustomerRegist", params);
-        } else if (type == ClientType.gateway) {
+        } else if (type == ClientType.GATEWAY) {
             result = HttpUtil.doPost(rasUrl + "/client/regist/gatewayRegist", params);
         } else {
             params.put("serviceType", serviceType.name());
-            if (serviceType == ServiceType.limited) {
+            if (serviceType == ServiceType.LIMITED) {
                 String interListString = "";
                 for(String str : interList){
                     interListString = interListString + "," + str;

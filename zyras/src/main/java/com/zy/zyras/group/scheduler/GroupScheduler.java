@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import com.zy.zyras.group.service.GroupService;
-import com.zy.zyras.ras.enums.WorkState;
+import com.zy.zyras.ras.enums.WorkMode;
 import com.zy.zyras.ras.utils.RasUtils;
 
 /**
@@ -28,7 +28,7 @@ public class GroupScheduler {
     
     @Scheduled(cron = "0/5 * * * * ?")
     private void groupSyn(){
-        if(RasUtils.getWorkState() == WorkState.group){
+        if(RasUtils.getWorkMode() == WorkMode.GROUP){
             rasService.groupSyn();
         }
     }

@@ -22,7 +22,7 @@ public class ServerWorkScheduler {
      */
     @Scheduled(cron = "0/20 * * * * ?")
     private void findService(){
-        if(Clients.getType() != ClientType.service){
+        if(Clients.getType() != ClientType.SERVICE){
             FindServiceService.getAllService();
         }
     }

@@ -5,5 +5,5 @@ package com.zy.zyrasc.enums;
  * @author wuhailong
  */
 public enum ServiceType {
-    all, limited
+    ALL, LIMITED
 }

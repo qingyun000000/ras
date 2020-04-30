@@ -35,7 +35,7 @@ public class ZyrasFilter implements Filter {
         String requestURI = request.getRequestURI();
         if("/zyras/heartbeat".equals(request.getRequestURI())){
             filterChain.doFilter(srequest, sresponse);
-        }else if(Clients.getType() == ClientType.gateway){
+        }else if(Clients.getType() == ClientType.GATEWAY){
             //设置允许跨域的配置
             // 这里填写你允许进行跨域的主机ip（正式上线时可以动态配置具体允许的域名和IP）
             rep.setHeader("Access-Control-Allow-Origin", "*");
@@ -60,7 +60,7 @@ public class ZyrasFilter implements Filter {
                 request.getRequestDispatcher("/serviceNotExist").forward(srequest, sresponse);
             }
             
-        }else if (Clients.getType() == ClientType.service){
+        }else if (Clients.getType() == ClientType.SERVICE){
             try {
                 String requestToken = (String) request.getParameter("zyrasRequestToken");
                 System.out.println("requestToken=" + requestToken);
@@ -76,7 +76,7 @@ public class ZyrasFilter implements Filter {
                 ex.printStackTrace();
                 request.getRequestDispatcher("/limitedServiceError").forward(srequest, sresponse);
             }
-        }else if(request.getAttribute("ras") != null && !"".equals(request.getAttribute("ras")) && Clients.getType() == ClientType.serviceAndCustomer){
+        }else if(request.getAttribute("ras") != null && !"".equals(request.getAttribute("ras")) && Clients.getType() == ClientType.SERVICE_AND_CUSTOMER){
             try {
                 if(ServiceVerificationService.verificateRequest(request)){
                     filterChain.doFilter(srequest, sresponse);

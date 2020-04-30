@@ -52,7 +52,7 @@ public class ServiceRequestService {
                 System.out.println("访问：" + client.getUniName() + "服务" + url);
                 response = request(method, client, url, params, clazz);
                 System.out.println("访问：" + client.getUniName() + ",服务" + url + ",结果："  + response.toString());
-                if(client.getFused() == FuseState.半熔断){
+                if(client.getFused() == FuseState.HALF_FUSED){
                     FuseService.serviceSuccess(ras, serviceName, client);
                 }
             } catch(Exception ex) {

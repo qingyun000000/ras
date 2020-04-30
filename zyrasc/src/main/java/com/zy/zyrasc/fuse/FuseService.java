@@ -62,7 +62,7 @@ public class FuseService {
                 pool.deleteServiceClient(serviceName, serviceClient);
             }
             //设置熔断状态和熔断时间，更新熔断次数
-            serviceClient.setFused(FuseState.熔断);
+            serviceClient.setFused(FuseState.FUSED);
             serviceClient.setFuseTime(new Date());
             serviceClient.setFuseTimes(serviceClient.getFuseTimes() + 1);
         }
@@ -79,7 +79,7 @@ public class FuseService {
         ServiceClient serviceClient = pool.getServiceClient(serviceName, client);
         if(serviceClient != null){
             //设置熔断状态和熔断时间，更新熔断次数
-            serviceClient.setFused(FuseState.正常);
+            serviceClient.setFused(FuseState.NORMAL);
             serviceClient.setFuseTime(new Date());
             serviceClient.setFuseTimes(0);
         }

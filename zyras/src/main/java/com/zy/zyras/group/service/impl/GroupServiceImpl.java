@@ -15,7 +15,7 @@ import com.zy.zyras.group.domain.vo.SynRequest;
 import com.zy.zyras.group.domain.vo.SynResponse;
 import com.zy.zyras.group.pool.RasPool;
 import com.zy.zyras.group.service.GroupService;
-import com.zy.zyras.ras.enums.GroupState;
+import com.zy.zyras.ras.enums.GroupMode;
 import com.zy.zyras.ras.utils.RasUtils;
 import com.zy.zyras.utils.HttpUtil;
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void groupSyn() {
         LoggerTools.log4j_write.info("开始集群同步");
-        if (RasUtils.getGroupState() == GroupState.equality) {
+        if (RasUtils.getGroupMode() == GroupMode.EQUALITY) {
             LoggerTools.log4j_write.info("平等模式");
             //获取连接配置
             int groupSynTime = RasUtils.getGroupSynTime();
