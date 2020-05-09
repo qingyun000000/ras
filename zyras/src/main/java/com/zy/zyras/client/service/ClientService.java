@@ -8,6 +8,8 @@ import cn.whl.commonutils.exception.TokenWrongException;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.domain.vo.RegistResponse;
+import com.zy.zyras.client.domain.vo.RequestTokenRequest;
+import com.zy.zyras.client.domain.vo.RequestTokenResponse;
 import com.zy.zyras.client.domain.vo.ServiceResponse;
 import java.util.List;
 
@@ -92,6 +94,14 @@ public interface ClientService {
      * 同步客户端
      * @param clientPool 
      */
-    public void synClients(com.zy.zyras.group.domain.vo.ClientPool clientPool);
+    public void synClients(com.zy.zyras.group.equality.domain.vo.ClientPool clientPool);
+    
+    /**
+     * 获取服务调用token(
+     * @param request
+     * @return 
+     * @throws cn.whl.commonutils.exception.TokenWrongException 
+     */
+    public RequestTokenResponse getServiceRequestToken(RequestTokenRequest request) throws TokenWrongException;
     
 }

@@ -1,15 +1,16 @@
 package com.zy.zyras.group.controller;
 
-import com.zy.zyras.group.domain.vo.RegistRequest;
-import com.zy.zyras.group.domain.vo.RegistResponse;
-import com.zy.zyras.group.domain.vo.SynRequest;
-import com.zy.zyras.group.domain.vo.SynResponse;
-import com.zy.zyras.group.service.GroupService;
+import com.zy.zyras.group.equality.domain.vo.RegistRequest;
+import com.zy.zyras.group.equality.domain.vo.RegistResponse;
+import com.zy.zyras.group.equality.domain.vo.SynRequest;
+import com.zy.zyras.group.equality.domain.vo.SynResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.zy.zyras.group.equality.service.EqualityGroupService;
+import com.zy.zyras.group.service.GroupService;
 
 /**
  * 集群Controller

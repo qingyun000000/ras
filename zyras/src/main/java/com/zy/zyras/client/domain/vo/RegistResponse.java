@@ -2,7 +2,7 @@ package com.zy.zyras.client.domain.vo;
 
 import com.zy.zyras.client.domain.enums.ClientType;
 import com.zy.zyras.client.domain.enums.ServiceType;
-import com.zy.zyras.ras.enums.BalanceMethod;
+import com.zy.zyras.enums.BalanceMethod;
 
 /**
  * 返回报文：注册

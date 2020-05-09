@@ -21,11 +21,13 @@ import com.zy.zyras.client.domain.vo.LimitedServiceClientResponse;
 import com.zy.zyras.client.domain.vo.HeartbeatResponse;
 import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.domain.vo.RegistResponse;
+import com.zy.zyras.client.domain.vo.RequestTokenRequest;
+import com.zy.zyras.client.domain.vo.RequestTokenResponse;
 import com.zy.zyras.client.domain.vo.ServiceClientResponse;
 import com.zy.zyras.client.domain.vo.ServiceResponse;
 import com.zy.zyras.client.pool.ClientPool;
 import com.zy.zyras.client.service.ClientService;
-import com.zy.zyras.ras.utils.RasUtils;
+import com.zy.zyras.set.RasSet;
 import com.zy.zyras.utils.HttpUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -135,9 +137,9 @@ public class ClientServiceImpl implements ClientService {
         response.setName(serviceClient.getName());
         response.setUniName(serviceClient.getUniName());
         response.setUrl(serviceClient.getUrl());
-        response.setRas(RasUtils.getGroupName());
+        response.setRas(RasSet.getGroupName());
         response.setToken(serviceClient.getToken());
-        response.setBalanceMethod(RasUtils.getBalanceMethod());
+        response.setBalanceMethod(RasSet.getBalanceMethod());
         
 
         return response;
@@ -185,8 +187,8 @@ public class ClientServiceImpl implements ClientService {
         response.setUniName(customerClient.getUniName());
         response.setUrl(customerClient.getUrl());
         response.setToken(customerClient.getToken());
-        response.setRas(RasUtils.getGroupName());
-        response.setBalanceMethod(RasUtils.getBalanceMethod());
+        response.setRas(RasSet.getGroupName());
+        response.setBalanceMethod(RasSet.getBalanceMethod());
 
         return response;
     }
@@ -232,8 +234,8 @@ public class ClientServiceImpl implements ClientService {
         response.setUniName(customerClient.getUniName());
         response.setUrl(customerClient.getUrl());
         response.setToken(customerClient.getToken());
-        response.setRas(RasUtils.getGroupName());
-        response.setBalanceMethod(RasUtils.getBalanceMethod());
+        response.setRas(RasSet.getGroupName());
+        response.setBalanceMethod(RasSet.getBalanceMethod());
 
         return response;
     }
@@ -280,8 +282,8 @@ public class ClientServiceImpl implements ClientService {
         response.setUniName(gatewayClient.getUniName());
         response.setUrl(gatewayClient.getUrl());
         response.setToken(gatewayClient.getToken());
-        response.setRas(RasUtils.getGroupName());
-        response.setBalanceMethod(RasUtils.getBalanceMethod());
+        response.setRas(RasSet.getGroupName());
+        response.setBalanceMethod(RasSet.getBalanceMethod());
 
         return response;
     }
@@ -571,8 +573,8 @@ public class ClientServiceImpl implements ClientService {
     public void heartbeat() {
         LoggerTools.log4j_write.info("开始心跳连接检测");
         //获取心跳连接配置
-        int hearbeatLeaveTimes = RasUtils.getHearbeatLeaveTimes();
-        int hearbeatTime = RasUtils.getHearbeatTime();
+        int hearbeatLeaveTimes = RasSet.getHearbeatLeaveTimes();
+        int hearbeatTime = RasSet.getHearbeatTime();
         Long date = new Date().getTime();
         //获取客户端
         ClientPool pool = ClientPool.getInstance();
@@ -586,7 +588,7 @@ public class ClientServiceImpl implements ClientService {
                 threadPool.submit(()->{
                     LoggerTools.log4j_write.info("连接" + client.getUniName());
                     Map<String, Object> params = new HashMap<>();
-                    params.put("ras", RasUtils.getGroupName());
+                    params.put("ras", RasSet.getGroupName());
                     String result = HttpUtil.doPost(client.getUrl() + "/zyras/heartbeat", params);
                     if (result != null) {
                         HeartbeatResponse response = JSON.parseObject(result, HeartbeatResponse.class);
@@ -618,7 +620,7 @@ public class ClientServiceImpl implements ClientService {
     }
     
     @Override
-    public void synClients(com.zy.zyras.group.domain.vo.ClientPool clientPool){
+    public void synClients(com.zy.zyras.group.equality.domain.vo.ClientPool clientPool){
         //同步客户端列表,同步全部为增加，删除客户端均由心跳连接处理
         ClientPool clientPoolLocal = ClientPool.getInstance();
         
@@ -666,4 +668,21 @@ public class ClientServiceImpl implements ClientService {
         updateGatewayLock.unlock();
     }
 
+    @Override
+    public RequestTokenResponse getServiceRequestToken(RequestTokenRequest request) throws TokenWrongException {
+        LoggerTools.log4j_write.info("获取服务调用token");
+        ClientPool pool = ClientPool.getInstance();
+        
+        //客户端校验
+        boolean auth = pool.containsCustomerOrServiceOrGatewayByToken(request.getToken());
+        if(!auth){
+            LoggerTools.log4j_write.info("客户校验失败");
+            throw new TokenWrongException();
+        }
+        
+        RequestTokenResponse response = new RequestTokenResponse();
+        response.setRasName(RasSet.getGroupName());
+        response.setRequestToken(RasSet.getRequestToken());
+        return response;
+    }
 }

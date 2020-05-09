@@ -2,7 +2,7 @@ package com.zy.zyras.group.pool;
 
 import cn.whl.commonutils.log.LoggerTools;
 import com.alibaba.fastjson.JSON;
-import com.zy.zyras.group.domain.Ras;
+import com.zy.zyras.group.equality.domain.Ras;
 import java.util.HashMap;
 import java.util.Map;
 
