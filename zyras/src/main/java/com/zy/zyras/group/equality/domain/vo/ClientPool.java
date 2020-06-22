@@ -1,6 +1,6 @@
 package com.zy.zyras.group.equality.domain.vo;
 
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;

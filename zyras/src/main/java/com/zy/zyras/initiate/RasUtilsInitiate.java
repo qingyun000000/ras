@@ -1,6 +1,6 @@
 package com.zy.zyras.initiate;
 
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import com.zy.zyras.enums.BalanceMethod;
 import com.zy.zyras.enums.GroupMode;
 import com.zy.zyras.enums.WorkMode;
@@ -60,10 +60,28 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
     private String groupMode;
     
     /*
-    * 注册列表
+    * 平等模式注册地址
     */
     @Value("${zyras.ras.group.regist:emp}")
     private String registUrls;
+    
+    /*
+    * master-slave模式master标志
+    */
+    @Value("${zyras.ras.group.ms.master:false}")
+    private boolean master;
+    
+    /*
+    * coord模式coord服务器地址
+    */
+    @Value("${zyras.ras.group.coord.url:emp}")
+    private String coordUrl;
+    
+    /*
+    * 集群工作模式
+    */
+    @Value("${zyras.ras.group.zookeeper.url:emp}")
+    private String zookeeperUrl;
     
     /*
     * 集群同步时间
@@ -128,17 +146,35 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
                 RasSet.setRegistUrls(registUrls2);
                 RasSet.setGroupSynTime(groupSynTime * 1000);
                 groupService.updateTokenByGroup();
-                //集群注册
-                groupService.registTo();
+                
+            }else if("master_slave".equals(groupMode)){
+                //主从模式
+                RasSet.setGroupMode(GroupMode.MASTER_SLAVE);
+                RasSet.setMaster(master);
+                
             }else if("coord".equals(groupMode)){
                 //coord模式
                 RasSet.setGroupMode(GroupMode.COORD);
-                
-                //集群注册
-                groupService.registTo();
+                if("emp".equals(coordUrl)){
+                    throw new RuntimeException("coord服务器地址不能为空");
+                }else{
+                    RasSet.setCoordUrl(coordUrl);
+                }
+            }else if("zookeeper".equals(groupMode)){
+                //coord模式
+                RasSet.setGroupMode(GroupMode.ZOOKEEPER);
+                if("emp".equals(zookeeperUrl)){
+                    throw new RuntimeException("zookeeper服务器地址不能为空");
+                }else{
+                    RasSet.setZookeeperUrl(zookeeperUrl);
+                }
             }else{
-                LoggerTools.log4j_write.info("不支持的集群工作模式");
+                LoggerUtils.log4j_write.info("不支持的集群工作模式");
             }
+            
+            //集群注册
+            groupService.registTo();
+            
         }else{
             //单机工作模式
             RasSet.setWorkMode(WorkMode.SINGLETON);
@@ -150,7 +186,7 @@ public class RasUtilsInitiate implements ApplicationListener<ContextRefreshedEve
         if("simple".equals(balanceMethod)){
             RasSet.setBalanceMethod(BalanceMethod.SIMPLE);
         }else{
-            LoggerTools.log4j_write.info("不支持的负载均衡策略");
+            LoggerUtils.log4j_write.info("不支持的负载均衡策略");
         }
     }
 

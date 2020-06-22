@@ -36,8 +36,23 @@ public class RasSet {
     */
     private static volatile GroupMode groupMode;
     
+    /**
+     * master-slave模式master标志
+     */
+    private static volatile boolean master;
+    
+    /**
+     * coord模式coord服务器地址
+     */
+    private static volatile String coordUrl;
+    
+    /**
+     * zookeeper模式zookeeper服务器地址
+     */
+    private static volatile String zookeeperUrl;
+    
     /*
-    * 注册地址
+    * 平等模式注册地址
     */
     private static volatile List<String> registUrls;
     
@@ -136,6 +151,30 @@ public class RasSet {
 
     public static void setGroupMode(GroupMode groupMode) {
         RasSet.groupMode = groupMode;
+    }
+
+    public static boolean isMaster() {
+        return master;
+    }
+
+    public static void setMaster(boolean master) {
+        RasSet.master = master;
+    }
+
+    public static String getCoordUrl() {
+        return coordUrl;
+    }
+
+    public static void setCoordUrl(String coordUrl) {
+        RasSet.coordUrl = coordUrl;
+    }
+
+    public static String getZookeeperUrl() {
+        return zookeeperUrl;
+    }
+
+    public static void setZookeeperUrl(String zookeeperUrl) {
+        RasSet.zookeeperUrl = zookeeperUrl;
     }
 
     public static List<String> getRegistUrls() {

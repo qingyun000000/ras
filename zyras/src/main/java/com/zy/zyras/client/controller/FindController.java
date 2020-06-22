@@ -1,10 +1,10 @@
 package com.zy.zyras.client.controller;
 
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import cn.whl.commonutils.service.result.ResultParam;
 import cn.whl.commonutils.service.result.ServiceResult;
-import cn.whl.commonutils.service.result.ServiceResultTool;
-import cn.whl.commonutils.verificate.VerificateTool;
+import cn.whl.commonutils.service.result.ServiceResultUtils;
+import cn.whl.commonutils.verificate.VerificateUtils;
 import com.zy.zyras.client.domain.vo.FindServiceRequest;
 import com.zy.zyras.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +33,11 @@ public class FindController {
      */
     @PostMapping("/service")
     public ServiceResult findService(FindServiceRequest findServiceRequest){
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
-            if(VerificateTool.isEmpty(findServiceRequest.getToken())){
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
+            if(VerificateUtils.isEmpty(findServiceRequest.getToken())){
                 throw new NullPointerException("输入token");
             }
-            if(VerificateTool.isEmpty(findServiceRequest.getName())){
+            if(VerificateUtils.isEmpty(findServiceRequest.getName())){
                 throw new NullPointerException("输入服务名");
             }
         }, ()->clientService.findService(findServiceRequest));
@@ -51,13 +51,13 @@ public class FindController {
      */
     @PostMapping("/allService")
     public ServiceResult findAllService(FindServiceRequest findServiceRequest){
-        LoggerTools.log4j_write.info("同步服务列表开始");
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
-            if(VerificateTool.isEmpty(findServiceRequest.getToken())){
+        LoggerUtils.log4j_write.info("同步服务列表开始");
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
+            if(VerificateUtils.isEmpty(findServiceRequest.getToken())){
                 throw new NullPointerException("输入token");
             }
         }, ()->clientService.findAllService(findServiceRequest.getToken()));
-        LoggerTools.log4j_write.info("同步服务列表结束");
+        LoggerUtils.log4j_write.info("同步服务列表结束");
         return result;
     }
     

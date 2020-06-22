@@ -3,8 +3,8 @@ package com.zy.zyras.client.controller;
 import cn.whl.commonutils.exception.NullException;
 import cn.whl.commonutils.service.result.ResultParam;
 import cn.whl.commonutils.service.result.ServiceResult;
-import cn.whl.commonutils.service.result.ServiceResultTool;
-import cn.whl.commonutils.verificate.VerificateTool;
+import cn.whl.commonutils.service.result.ServiceResultUtils;
+import cn.whl.commonutils.verificate.VerificateUtils;
 import com.zy.zyras.client.domain.vo.RequestTokenRequest;
 import com.zy.zyras.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,8 @@ public class ServiceRequestAuthorityController {
      */
     @PostMapping("/token")
     public ServiceResult serviceRequestToken(RequestTokenRequest request){
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
-            if(VerificateTool.isEmpty(request.getToken())){
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
+            if(VerificateUtils.isEmpty(request.getToken())){
                 throw new NullException("输入token");
             }
         }, ()->clientService.getServiceRequestToken(request));

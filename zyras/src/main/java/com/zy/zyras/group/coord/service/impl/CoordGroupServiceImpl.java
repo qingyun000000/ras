@@ -1,7 +1,7 @@
 package com.zy.zyras.group.coord.service.impl;
 
-import com.zy.zyras.token.RasEqualityModeToken;
-import cn.whl.commonutils.token.TokenTool;
+import cn.whl.commonutils.log.LoggerUtils;
+import cn.whl.commonutils.token.TokenUtils;
 import com.zy.coordc.CoordServiceUtil;
 import com.zy.coordc.enums.NodeType;
 import com.zy.coordc.exception.NodeExistExcepiton;
@@ -14,6 +14,7 @@ import com.zy.coordc.vo.RegistResponse;
 import com.zy.zyras.group.coord.CoordRasState;
 import org.springframework.stereotype.Service;
 import com.zy.zyras.group.coord.service.CoordGroupService;
+import com.zy.zyras.set.RasSet;
 import com.zy.zyras.token.RasCoordModeToken;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,17 +27,15 @@ import java.util.logging.Logger;
 public class CoordGroupServiceImpl implements CoordGroupService{
     
     @Override
-    public void regist(String group){
+    public void regist(String coordUrl, String group, int port) throws NodeExistExcepiton{
         RegistRequest request = new RegistRequest();
-        request.setCoordUrl("");
+        request.setCoordUrl(coordUrl);
+        request.setPort(port);
         request.setGroup("ras_" + group);
-        try {
-            RegistResponse registResponse = CoordServiceUtil.regist(request);
-        } catch (NodeExistExcepiton ex) {
-            GetNodeRequest request1 = new GetNodeRequest();
-            NodeResponse masterNode = CoordServiceUtil.getNode(request1);
-            CoordRasState.setMaster(false);
-        }
+        
+        //注册客户端
+        CoordServiceUtil.regist(request);
+        
     }
     
     @Override
@@ -63,7 +62,7 @@ public class CoordGroupServiceImpl implements CoordGroupService{
         String createToken = null;
         
         if(CoordRasState.isMaster()){
-            createToken = TokenTool.createToken(group, new RasCoordModeToken());
+            createToken = TokenUtils.createToken(group, new RasCoordModeToken());
             CreateNodeRequest request = new CreateNodeRequest();
             
             try {

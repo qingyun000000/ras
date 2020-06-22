@@ -1,5 +1,7 @@
 package com.zy.zyras.group.service.impl;
 
+import cn.whl.commonutils.log.LoggerUtils;
+import com.zy.coordc.exception.NodeExistExcepiton;
 import com.zy.zyras.group.coord.service.CoordGroupService;
 import com.zy.zyras.group.equality.domain.Ras;
 import com.zy.zyras.group.equality.domain.vo.RegistRequest;
@@ -38,8 +40,12 @@ public class GroupServiceImpl implements GroupService {
         if(RasSet.getGroupMode() == GroupMode.EQUALITY){
             equalityGroupService.registTo(RasSet.getName(), RasSet.getPort(), RasSet.getRegistUrls());
         }else if(RasSet.getGroupMode() == GroupMode.COORD){
-            coordGroupService.regist(RasSet.getGroupName());
-            coordGroupService.getMasterRAS(RasSet.getGroupName(), RasSet.getPort());
+            try {
+                coordGroupService.regist(RasSet.getCoordUrl(), RasSet.getGroupName(), RasSet.getPort());
+                coordGroupService.getMasterRAS(RasSet.getGroupName(), RasSet.getPort());
+            } catch (NodeExistExcepiton ex) {
+                LoggerUtils.log4j_write.error(ex);
+            }
         }
     }
 
@@ -48,8 +54,7 @@ public class GroupServiceImpl implements GroupService {
         if(RasSet.getGroupMode() == GroupMode.EQUALITY){
             equalityGroupService.groupSyn(RasSet.getGroupSynTime());
         }else if(RasSet.getGroupMode() == GroupMode.COORD){
-            coordGroupService.regist(RasSet.getGroupName());
-            coordGroupService.getMasterRAS(RasSet.getGroupName(), RasSet.getPort());
+            
         }
     }
 

@@ -1,11 +1,11 @@
 package com.zy.zyras.client.controller;
 
 import cn.whl.commonutils.exception.InputWrongException;
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import cn.whl.commonutils.service.result.ResultParam;
 import cn.whl.commonutils.service.result.ServiceResult;
-import cn.whl.commonutils.service.result.ServiceResultTool;
-import cn.whl.commonutils.verificate.VerificateTool;
+import cn.whl.commonutils.service.result.ServiceResultUtils;
+import cn.whl.commonutils.verificate.VerificateUtils;
 import com.zy.zyras.client.domain.vo.RegistRequest;
 import com.zy.zyras.client.service.ClientService;
 import javax.servlet.http.HttpServletRequest;
@@ -36,16 +36,16 @@ public class RegistController {
      */
     @PostMapping("/regist")
     public ServiceResult regist(RegistRequest request, HttpServletRequest req) {
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
             String clientType = request.getClientType();
-            if(VerificateTool.isEmpty(clientType)){
+            if(VerificateUtils.isEmpty(clientType)){
                 throw new NullPointerException("输入客户端类型");
             }
             if(!"serviceAndCustomer".equals(clientType) && !"service".equals(clientType) && !"customer".equals(clientType) && "gateway".equals(clientType)){
                 throw new InputWrongException("输入客户端类型");
             }
             if("service".equals(clientType)){
-                if(VerificateTool.isEmpty(request.getServiceType())){
+                if(VerificateUtils.isEmpty(request.getServiceType())){
                     throw new NullPointerException("输入服务类型");
                 }
                 String serviceType = request.getServiceType();
@@ -53,10 +53,10 @@ public class RegistController {
                     throw new InputWrongException("输入服务类型");
                 }
             }
-            if(VerificateTool.isEmpty(request.getName())){
+            if(VerificateUtils.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            LoggerUtils.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
             request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.regist(request));
         return result;
@@ -69,22 +69,22 @@ public class RegistController {
      */
     @PostMapping("/serviceRegist")
     public ServiceResult serviceRegist(RegistRequest request, HttpServletRequest req) {
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
             String clientType = request.getClientType();
-            if(VerificateTool.notEmpty(clientType) && (!"service".equals(clientType) && !"limitedService".equals(clientType))){
+            if(VerificateUtils.notEmpty(clientType) && (!"service".equals(clientType) && !"limitedService".equals(clientType))){
                 throw new InputWrongException("输入客户端类型");
             }
-            if(VerificateTool.isEmpty(request.getServiceType())){
+            if(VerificateUtils.isEmpty(request.getServiceType())){
                 throw new NullPointerException("输入服务类型");
             }
             String serviceType = request.getServiceType();
             if(!"all".equals(serviceType) && !"limited".equals(serviceType)){
                 throw new InputWrongException("输入服务类型");
             }
-            if(VerificateTool.isEmpty(request.getName())){
+            if(VerificateUtils.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            LoggerUtils.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
             request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.serviceRegist(request));
         return result;
@@ -98,16 +98,16 @@ public class RegistController {
      */
     @PostMapping("/customerRegist")
     public ServiceResult customerRegist(RegistRequest request, HttpServletRequest req) {
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
             String clientType = request.getClientType();
-            if(VerificateTool.notEmpty(clientType) && !"customer".equals(clientType)){
+            if(VerificateUtils.notEmpty(clientType) && !"customer".equals(clientType)){
                 throw new InputWrongException("输入客户端类型");
             }
-            if(VerificateTool.isEmpty(request.getName())){
+            if(VerificateUtils.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端" + request.getName() + "调用接入 ");
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            LoggerUtils.log4j_write.info("客户端" + request.getName() + "调用接入 ");
+            LoggerUtils.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
             request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.customerRegist(request));
         return result;
@@ -120,22 +120,22 @@ public class RegistController {
      */
     @PostMapping("/serviceAndCustomerRegist")
     public ServiceResult serviceAndCunstomerRegist(RegistRequest request, HttpServletRequest req) {
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
             String clientType = request.getClientType();
-            if(VerificateTool.notEmpty(clientType) && !"serviceAndCustomer".equals(clientType)){
+            if(VerificateUtils.notEmpty(clientType) && !"serviceAndCustomer".equals(clientType)){
                 throw new InputWrongException("输入客户端类型");
             }
-            if(VerificateTool.isEmpty(request.getServiceType())){
+            if(VerificateUtils.isEmpty(request.getServiceType())){
                 throw new NullPointerException("输入服务类型");
             }
             String serviceType = request.getServiceType();
             if(!"all".equals(serviceType) && !"limited".equals(serviceType)){
                 throw new InputWrongException("输入服务类型");
             }
-            if(VerificateTool.isEmpty(request.getName())){
+            if(VerificateUtils.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            LoggerUtils.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
             request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.serviceAndCunstomerRegist(request));
         return result;
@@ -148,15 +148,15 @@ public class RegistController {
      */
     @PostMapping("/gatewayRegist")
     public ServiceResult gatewayRegist(RegistRequest request, HttpServletRequest req) {
-        ServiceResult result = ServiceResultTool.action(ResultParam.Data, ()->{
+        ServiceResult result = ServiceResultUtils.action(ResultParam.Data, ()->{
             String clientType = request.getClientType();
-            if(VerificateTool.notEmpty(clientType) && !"gateway".equals(clientType)){
+            if(VerificateUtils.notEmpty(clientType) && !"gateway".equals(clientType)){
                 throw new InputWrongException("输入客户端类型");
             }
-            if(VerificateTool.isEmpty(request.getName())){
+            if(VerificateUtils.isEmpty(request.getName())){
                 throw new NullPointerException("输入客户端名");
             }
-            LoggerTools.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
+            LoggerUtils.log4j_write.info("客户端URL：" + req.getRemoteAddr() + ":" + request.getPort());
             request.setUrl("http://" + req.getRemoteAddr() + ":" + request.getPort());
         }, ()->clientService.gatewayRegist(request));
         return result;

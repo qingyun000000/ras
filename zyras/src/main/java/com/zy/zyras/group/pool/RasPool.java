@@ -1,6 +1,6 @@
 package com.zy.zyras.group.pool;
 
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import com.alibaba.fastjson.JSON;
 import com.zy.zyras.group.equality.domain.Ras;
 import java.util.HashMap;
@@ -41,13 +41,13 @@ public class RasPool {
      */
     public static RasPool getInstance() {
         if (instance == null) {
-            LoggerTools.log4j_write.info("初始化rasPool");
+            LoggerUtils.log4j_write.info("初始化rasPool");
             synchronized (RasPool.class) {
                 if (instance == null) {
                     instance = new RasPool();
                 }
             }
-            LoggerTools.log4j_write.info("初始化rasPool结束");
+            LoggerUtils.log4j_write.info("初始化rasPool结束");
         }
         return instance;
     }

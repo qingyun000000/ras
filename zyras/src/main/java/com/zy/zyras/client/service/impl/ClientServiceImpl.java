@@ -5,9 +5,9 @@ import cn.whl.commonutils.exception.InputWrongException;
 import cn.whl.commonutils.exception.NotExistException;
 import cn.whl.commonutils.exception.ServiceRunException;
 import cn.whl.commonutils.exception.TokenWrongException;
-import cn.whl.commonutils.log.LoggerTools;
-import cn.whl.commonutils.token.TokenTool;
-import cn.whl.commonutils.verificate.VerificateTool;
+import cn.whl.commonutils.log.LoggerUtils;
+import cn.whl.commonutils.token.TokenUtils;
+import cn.whl.commonutils.verificate.VerificateUtils;
 import com.alibaba.fastjson.JSON;
 import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.CustomerClient;
@@ -108,7 +108,7 @@ public class ClientServiceImpl implements ClientService {
                 }
                 response.setServiceType(ServiceType.limited);
                 try {
-                    serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                    serviceClient.setToken(TokenUtils.createToken(new Date().getTime() + ""));
                 } catch (Exception ex) {
                     throw new ServiceRunException("token生成失败");
                 }
@@ -124,7 +124,7 @@ public class ClientServiceImpl implements ClientService {
                 }
                 response.setServiceType(ServiceType.all);
                 try {
-                    serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                    serviceClient.setToken(TokenUtils.createToken(new Date().getTime() + ""));
                 } catch (Exception ex) {
                     throw new ServiceRunException("token生成失败");
                 }
@@ -163,7 +163,7 @@ public class ClientServiceImpl implements ClientService {
                 customerClient = new CustomerClient();
                 customerClient.setName(request.getName());
                 String uniName;
-                if (VerificateTool.notEmpty(request.getUniName())) {
+                if (VerificateUtils.notEmpty(request.getUniName())) {
                     uniName = request.getUniName();
                 } else {
                     uniName = request.getUrl();
@@ -171,7 +171,7 @@ public class ClientServiceImpl implements ClientService {
                 customerClient.setUniName(uniName);
                 customerClient.setUrl(request.getUrl());
                 try {
-                    customerClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                    customerClient.setToken(TokenUtils.createToken(new Date().getTime() + ""));
                 } catch (Exception ex) {
                     throw new ServiceRunException("token生成失败");
                 }
@@ -258,7 +258,7 @@ public class ClientServiceImpl implements ClientService {
                 gatewayClient = new GatewayClient();
                 gatewayClient.setName(request.getName());
                 String uniName;
-                if (VerificateTool.notEmpty(request.getUniName())) {
+                if (VerificateUtils.notEmpty(request.getUniName())) {
                     uniName = request.getUniName();
                 } else {
                     uniName = request.getUrl();
@@ -266,7 +266,7 @@ public class ClientServiceImpl implements ClientService {
                 gatewayClient.setUniName(uniName);
                 gatewayClient.setUrl(request.getUrl());
                 try {
-                    gatewayClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+                    gatewayClient.setToken(TokenUtils.createToken(new Date().getTime() + ""));
                 } catch (Exception ex) {
                     throw new ServiceRunException("token生成失败");
                 }
@@ -381,7 +381,7 @@ public class ClientServiceImpl implements ClientService {
         }
         //加入服务
         String uniName;
-        if (VerificateTool.notEmpty(request.getUniName())) {
+        if (VerificateUtils.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
         } else {
             uniName = request.getUrl();
@@ -391,7 +391,7 @@ public class ClientServiceImpl implements ClientService {
         limitedServiceClient.setUniName(uniName);
         limitedServiceClient.setUrl(request.getUrl());
         try {
-            limitedServiceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+            limitedServiceClient.setToken(TokenUtils.createToken(new Date().getTime() + ""));
         } catch (Exception ex) {
             throw new ServiceRunException("token生成失败");
         }
@@ -418,7 +418,7 @@ public class ClientServiceImpl implements ClientService {
     private ServiceClient serviceRegist(int contains, ClientPool pool, RegistRequest request) throws ServiceRunException {
         //组装服务
         String uniName;
-        if (VerificateTool.notEmpty(request.getUniName())) {
+        if (VerificateUtils.notEmpty(request.getUniName())) {
             uniName = request.getUniName();
         } else {
             uniName = request.getUrl();
@@ -428,7 +428,7 @@ public class ClientServiceImpl implements ClientService {
         serviceClient.setUniName(uniName);
         serviceClient.setUrl(request.getUrl());
         try {
-            serviceClient.setToken(TokenTool.createToken(new Date().getTime() + ""));
+            serviceClient.setToken(TokenUtils.createToken(new Date().getTime() + ""));
         } catch (Exception ex) {
             throw new ServiceRunException("token生成失败");
         }
@@ -571,7 +571,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void heartbeat() {
-        LoggerTools.log4j_write.info("开始心跳连接检测");
+        LoggerUtils.log4j_write.info("开始心跳连接检测");
         //获取心跳连接配置
         int hearbeatLeaveTimes = RasSet.getHearbeatLeaveTimes();
         int hearbeatTime = RasSet.getHearbeatTime();
@@ -586,7 +586,7 @@ public class ClientServiceImpl implements ClientService {
             //时间校验
             if (client.getTms() == null || date - client.getTms() > hearbeatTime) {
                 threadPool.submit(()->{
-                    LoggerTools.log4j_write.info("连接" + client.getUniName());
+                    LoggerUtils.log4j_write.info("连接" + client.getUniName());
                     Map<String, Object> params = new HashMap<>();
                     params.put("ras", RasSet.getGroupName());
                     String result = HttpUtil.doPost(client.getUrl() + "/zyras/heartbeat", params);
@@ -616,7 +616,7 @@ public class ClientServiceImpl implements ClientService {
                 });
             }
         }
-        LoggerTools.log4j_write.info("心跳连接检测完成");
+        LoggerUtils.log4j_write.info("心跳连接检测完成");
     }
     
     @Override
@@ -670,13 +670,13 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public RequestTokenResponse getServiceRequestToken(RequestTokenRequest request) throws TokenWrongException {
-        LoggerTools.log4j_write.info("获取服务调用token");
+        LoggerUtils.log4j_write.info("获取服务调用token");
         ClientPool pool = ClientPool.getInstance();
         
         //客户端校验
         boolean auth = pool.containsCustomerOrServiceOrGatewayByToken(request.getToken());
         if(!auth){
-            LoggerTools.log4j_write.info("客户校验失败");
+            LoggerUtils.log4j_write.info("客户校验失败");
             throw new TokenWrongException();
         }
         

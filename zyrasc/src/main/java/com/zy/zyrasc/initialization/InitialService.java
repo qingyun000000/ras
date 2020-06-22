@@ -18,7 +18,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 /**
- * 注册服务
+ * 客户端初始化服务
  *
  * @author wuhailong
  * @createTime 2020-03-27

@@ -1,8 +1,8 @@
 package com.zy.zyras.group.equality.service.impl;
 
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import com.zy.zyras.token.RasEqualityModeToken;
-import cn.whl.commonutils.token.TokenTool;
+import cn.whl.commonutils.token.TokenUtils;
 import com.alibaba.fastjson.JSON;
 import com.zy.zyras.client.pool.ClientPool;
 import com.zy.zyras.client.service.ClientService;
@@ -44,7 +44,7 @@ public class EqualityGroupServiceImpl implements EqualityGroupService {
 
     @Override
     public void registTo(String name, int port, List<String> registUrls) {
-        LoggerTools.log4j_write.info("开始集群注册");
+        LoggerUtils.log4j_write.info("开始集群注册");
 
         //创建线程池
         ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -55,18 +55,18 @@ public class EqualityGroupServiceImpl implements EqualityGroupService {
                 params.put("port", port);
                 String result = HttpUtil.doPost(url + "/group/regist", params);
                 try {
-                    LoggerTools.log4j_write.info(result);
+                    LoggerUtils.log4j_write.info(result);
                     RegistResponse response = JSON.parseObject(result, RegistResponse.class);
                     if (response.isSuccess()) {
                         //注册成功，本方注册
                         registByRegistSuc(url, response.getRasName());
                     }
                 } catch (Exception e) {
-                    LoggerTools.log4j_write.info("集群注册失败：" + url);
+                    LoggerUtils.log4j_write.info("集群注册失败：" + url);
                 }
             });
         }
-        LoggerTools.log4j_write.info("结束集群注册");
+        LoggerUtils.log4j_write.info("结束集群注册");
     }
 
     @Override
@@ -81,20 +81,20 @@ public class EqualityGroupServiceImpl implements EqualityGroupService {
         RegistResponse response = new RegistResponse();
         response.setSuccess(true);
         response.setRasName(rasName);
-        LoggerTools.log4j_write.info("注册完成：" + ras.getName());
+        LoggerUtils.log4j_write.info("注册完成：" + ras.getName());
 
         return response;
     }
 
     @Override
     public void groupSyn(int groupSynTime) {
-        LoggerTools.log4j_write.info("开始集群同步-平等模式");
+        LoggerUtils.log4j_write.info("开始集群同步-平等模式");
         Long date = new Date().getTime();
         //获取池
         RasPool pool = RasPool.getInstance();
         Map<String, Ras> rass = pool.getAllRass();
         for (Ras ras : rass.values()) {
-            LoggerTools.log4j_write.info("向" + ras.getName() + "同步");
+            LoggerUtils.log4j_write.info("向" + ras.getName() + "同步");
             if (ras.getTms() == null || date - ras.getTms() > groupSynTime) {
                 Map<String, Object> params = new HashMap<>();
                 params.put("rasPoolJson", JSON.toJSON(RasPool.getInstance()));
@@ -102,16 +102,16 @@ public class EqualityGroupServiceImpl implements EqualityGroupService {
                 System.out.println("同步至" + ras.getUrl());
                 String result = HttpUtil.doPost(ras.getUrl() + "/group/syn", params);
             }
-            LoggerTools.log4j_write.info("向" + ras.getName() + "同步完成");
+            LoggerUtils.log4j_write.info("向" + ras.getName() + "同步完成");
             ras.setTms(date);
         }
 
-        LoggerTools.log4j_write.info("结束集群同步");
+        LoggerUtils.log4j_write.info("结束集群同步");
     }
 
     @Override
     public SynResponse syn(SynRequest synRequest) {
-        LoggerTools.log4j_write.info("处理集群同步信息开始");
+        LoggerUtils.log4j_write.info("处理集群同步信息开始");
 
         //同步注册中心列表
         RasPool rasPoolLocal = RasPool.getInstance();
@@ -150,7 +150,7 @@ public class EqualityGroupServiceImpl implements EqualityGroupService {
     public String updateTokenByGroup(String groupName) {
         String token = null;
         try {
-            token = TokenTool.createToken(groupName, new RasEqualityModeToken());
+            token = TokenUtils.createToken(groupName, new RasEqualityModeToken());
         } catch (Exception ex) {
             Logger.getLogger(EqualityGroupServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

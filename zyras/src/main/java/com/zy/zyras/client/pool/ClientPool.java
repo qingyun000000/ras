@@ -1,6 +1,6 @@
 package com.zy.zyras.client.pool;
 
-import cn.whl.commonutils.log.LoggerTools;
+import cn.whl.commonutils.log.LoggerUtils;
 import com.zy.zyras.client.domain.Client;
 import com.zy.zyras.client.domain.CustomerClient;
 import com.zy.zyras.client.domain.GatewayClient;
@@ -60,13 +60,13 @@ public class ClientPool {
      */
     public static ClientPool getInstance() {
         if (instance == null) {
-            LoggerTools.log4j_write.info("初始化clientPool");
+            LoggerUtils.log4j_write.info("初始化clientPool");
             synchronized (ClientPool.class) {
                 if (instance == null) {
                     instance = new ClientPool();
                 }
             }
-            LoggerTools.log4j_write.info("初始化clientPool结束");
+            LoggerUtils.log4j_write.info("初始化clientPool结束");
         }
         return instance;
     }
@@ -250,7 +250,7 @@ public class ClientPool {
      * @return
      */
     public boolean containsCustomerOrGatewayByToken(String token) {
-        LoggerTools.log4j_write.info("调用方身份校验");
+        LoggerUtils.log4j_write.info("调用方身份校验");
         for (GatewayClient client : gatewayClients.values()) {
             if (client.getToken().equals(token)) {
                 return true;
@@ -261,7 +261,7 @@ public class ClientPool {
                 return true;
             }
         }
-        LoggerTools.log4j_write.info("调用方身份校验不通过");
+        LoggerUtils.log4j_write.info("调用方身份校验不通过");
         return false;
     }
 
@@ -272,13 +272,13 @@ public class ClientPool {
      * @return
      */
     public boolean containsCustomerOrServiceOrGatewayByToken(String token) {
-        LoggerTools.log4j_write.info("用户身份校验");
+        LoggerUtils.log4j_write.info("用户身份校验");
         boolean result = this.containsCustomerOrGatewayByToken(token);
         if (result) {
-            LoggerTools.log4j_write.info("用户身份校验通过");
+            LoggerUtils.log4j_write.info("用户身份校验通过");
             return true;
         }
-        LoggerTools.log4j_write.info("服务方身份校验");
+        LoggerUtils.log4j_write.info("服务方身份校验");
         System.out.println(token);
         for (Map<String, ServiceClient> service : serviceClients.values()) {
             for (ServiceClient client : service.values()) {
@@ -287,18 +287,18 @@ public class ClientPool {
                 }
             }
         }
-        LoggerTools.log4j_write.info("非限定服务方身份校验不通过");
-        LoggerTools.log4j_write.info("限定服务方身份校验");
+        LoggerUtils.log4j_write.info("非限定服务方身份校验不通过");
+        LoggerUtils.log4j_write.info("限定服务方身份校验");
         for (Map<String, LimitedServiceClient> service : limitedServiceClients.values()) {
-            LoggerTools.log4j_write.info("限定服务方身份校验");
+            LoggerUtils.log4j_write.info("限定服务方身份校验");
             for (LimitedServiceClient client : service.values()) {
                 if (client.getToken().equals(token)) {
-                    LoggerTools.log4j_write.info("限定服务方身份校验");
+                    LoggerUtils.log4j_write.info("限定服务方身份校验");
                     return true;
                 }
             }
         }
-        LoggerTools.log4j_write.info("用户身份校验不通过");
+        LoggerUtils.log4j_write.info("用户身份校验不通过");
         return false;
     }
 

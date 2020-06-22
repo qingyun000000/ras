@@ -1,7 +1,7 @@
 package com.zy.zyras.utils;
 
 import com.zy.zyras.token.RasSingleModeToken;
-import cn.whl.commonutils.token.TokenTool;
+import cn.whl.commonutils.token.TokenUtils;
 import com.zy.zyras.initiate.RasUtilsInitiate;
 import com.zy.zyras.set.RasSet;
 import java.util.logging.Level;
@@ -16,7 +16,7 @@ public class RequestTokenUtils {
     public static void setTokenBySingle() {
         try {
             String name = RasSet.getName();
-            String token = TokenTool.createToken(name, new RasSingleModeToken());
+            String token = TokenUtils.createToken(name, new RasSingleModeToken());
             
             RasSet.setRequestToken(token);
             
